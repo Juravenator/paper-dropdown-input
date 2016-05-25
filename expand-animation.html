@@ -1,0 +1,18 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animation-behavior.html">
+<script>
+"use strict";
+
+Polymer({
+  is: "expand-animation",
+  behaviors: [ Polymer.NeonAnimationBehavior ],
+  configure: function(config) {
+    var node = config.node, height = node.getBoundingClientRect().height;
+    return this._effect = new KeyframeEffect(node, [ {
+      height: height / 2 + "px"
+    }, {
+      height: height + "px"
+    } ], this.timingFromConfig(config)), this._effect;
+  }
+});
+</script>
