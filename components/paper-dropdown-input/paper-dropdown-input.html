@@ -1,0 +1,262 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<!-- we're faking a paper-input, so we shamelessly copy its imports  -->
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="/bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="/bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="/bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="expand-animation.html">
+
+<dom-module id="paper-dropdown-input">
+  <template>
+
+    <template id="menuTemplate">
+        <template is="dom-repeat" items="[[items]]" as="item">
+          <paper-item>[[item]]</paper-item>
+        </template>
+		</template>
+
+    <style>
+:host {
+  display: inline-block;
+  min-width: var(--min-width, 200px);
+}
+
+input::-webkit-input-placeholder {
+  color: var(--paper-input-container-color, --secondary-text-color);
+}
+
+input:-moz-placeholder {
+  color: var(--paper-input-container-color, --secondary-text-color);
+}
+
+input::-moz-placeholder {
+  color: var(--paper-input-container-color, --secondary-text-color);
+}
+
+input:-ms-input-placeholder {
+  color: var(--paper-input-container-color, --secondary-text-color);
+}
+
+paper-material {
+  min-width: var(--min-width, 200px);
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  z-index: 10;
+  opacity: 0;
+}
+
+paper-material[opened] {
+  opacity: 1;
+}
+
+iron-icon[invisible] {
+  opacity: 0;
+}
+
+</style>
+
+    <paper-input-container no-label-float="[[noLabelFloat]]"
+                           always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
+                           auto-validate$="[[autoValidate]]"
+                           disabled$="[[disabled]]"
+                           invalid="[[invalid]]"
+                           focused="{{opened}}"
+                           class="dropdown-trigger">
+
+      <content select="[prefix]"></content>
+
+      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
+
+      <input is="iron-input" id="input"
+            aria-labelledby$="[[_ariaLabelledBy]]"
+            aria-describedby$="[[_ariaDescribedBy]]"
+            disabled$="[[disabled]]"
+            title$="[[title]]"
+            bind-value="{{_inputvalue}}"
+            invalid="{{invalid}}"
+            prevent-invalid-input="[[preventInvalidInput]]"
+            allowed-pattern="[[allowedPattern]]"
+            validator="[[validator]]"
+            type$="[[type]]"
+            pattern$="[[pattern]]"
+            required$="[[required]]"
+            autocomplete$="[[autocomplete]]"
+            autofocus$="[[autofocus]]"
+            inputmode$="[[inputmode]]"
+            minlength$="[[minlength]]"
+            maxlength$="[[maxlength]]"
+            min$="[[min]]"
+            max$="[[max]]"
+            step$="[[step]]"
+            name$="[[name]]"
+            placeholder$="[[placeholder]]"
+            readonly$="[[readonly]]"
+            list$="[[list]]"
+            size$="[[size]]"
+            autocapitalize$="[[autocapitalize]]"
+            autocorrect$="[[autocorrect]]"
+            tabindex$="[[tabindex]]"
+            autosave$="[[autosave]]"
+            results$="[[results]]"
+            accept$="[[accept]]"
+            multiple$="[[multiple]]">
+
+      <content select="[suffix]"></content>
+      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_clearInput"></iron-icon>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error>[[errorMessage]]</paper-input-error>
+      </template>
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+    </paper-input-container>
+
+    <div class="container">
+      <paper-material elevation="1" opened$="{{opened}}" id="menu">
+        <paper-listbox on-click="_onClick">
+          <content id="content"></content>
+        </paper-listbox>
+      </paper-material>
+    </div>
+
+    <!-- this div fulfills an a11y requirement for combobox, do not remove -->
+    <div role="button"></div>
+  </template>
+  <script>
+"use strict";
+
+Polymer({
+  is: "paper-dropdown-input",
+  behaviors: [ Polymer.IronFormElementBehavior, Polymer.PaperInputBehavior, Polymer.Templatizer, Polymer.NeonAnimationRunnerBehavior ],
+  properties: {
+    items: {
+      type: Array,
+      value: []
+    },
+    _filtereditems: {
+      type: Array,
+      computed: "_filterItems(items, immediateValue)",
+      observer: "_updateTemplate"
+    },
+    _inputvalue: {
+      type: String,
+      value: "",
+      observer: "_inputvalueChanged"
+    },
+    immediateValue: {
+      type: String,
+      value: "",
+      readOnly: !0,
+      notify: !0
+    },
+    value: {
+      type: String,
+      value: "",
+      observer: "_valueChanged"
+    },
+    _templateInstance: Object,
+    opened: {
+      type: Boolean,
+      observer: "_openedChanged"
+    },
+    noFreedom: {
+      type: Boolean,
+      value: !1
+    },
+    animationConfig: {
+      type: Object,
+      value: function() {
+        return {
+          showmenu: [ {
+            name: "fade-in-animation",
+            node: this.$.menu,
+            timing: {
+              delay: 150,
+              duration: 50
+            }
+          }, {
+            name: "expand-animation",
+            node: this.$.menu,
+            timing: {
+              delay: 150,
+              duration: 200
+            }
+          } ],
+          hidemenu: [ {
+            name: "fade-out-animation",
+            node: this.$.menu,
+            timing: {
+              duration: 200
+            }
+          } ]
+        };
+      }
+    }
+  },
+  listeners: {
+    "neon-animation-finish": "_onNeonAnimationFinish"
+  },
+  _filterItems: function(items, immediateValue) {
+    for (var result = [], i = 0; i < items.length; i++) {
+      var include = !1;
+      items[i].value ? include = items[i].value.toLowerCase().indexOf(immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
+      include && result.push(items[i]);
+    }
+    return result;
+  },
+  _onClick: function(event) {
+    var selectedItem = Polymer.dom(event).localTarget;
+    selectedItem && (this._inputvalue = selectedItem.value || selectedItem.label || selectedItem.textContent.trim());
+  },
+  ready: function() {
+    var template = Polymer.dom(this).querySelector("template");
+    template || (template = this.$.menuTemplate), this.templatize(template), this._templateInstance = this.stamp({
+      items: this._filtereditems
+    }), Polymer.dom(this).appendChild(this._templateInstance.root);
+  },
+  _updateTemplate: function(filtereditems) {
+    this._templateInstance && (this._templateInstance.items = filtereditems);
+  },
+  _openedChanged: function(opened) {
+    this.opened ? (this.$.menu.style.display = "block", this.playAnimation("showmenu")) : this.playAnimation("hidemenu");
+  },
+  _clearInput: function() {
+    this._inputvalue = "";
+  },
+  _getIcon: function(immediateValue) {
+    return immediateValue && "" != immediateValue ? "close" : "arrow-drop-down";
+  },
+  _onNeonAnimationFinish: function() {
+    this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
+  },
+  _handleNewValue: function() {
+    if (1 == this._filtereditems.length && (this._inputvalue = this._filtereditems[0], 
+    this._setImmediateValue(this._inputvalue)), this.noFreedom) {
+      for (var match = !1, i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);
+      }
+      match ? this.value = this.immediateValue : this._inputvalue = this.value;
+    } else this.value = this.immediateValue;
+  },
+  _valueChanged: function(newval, oldval) {
+    this._inputvalue = newval, this._setImmediateValue(newval), this._handleNewValue();
+  },
+  _inputvalueChanged: function(value) {
+    this._setImmediateValue(value);
+  }
+});
+</script>
+</dom-module>
