@@ -82,7 +82,7 @@ iron-icon[invisible] {
             aria-describedby$="[[_ariaDescribedBy]]"
             disabled$="[[disabled]]"
             title$="[[title]]"
-            bind-value="{{value}}"
+            bind-value="{{_inputvalue}}"
             invalid="{{invalid}}"
             prevent-invalid-input="[[preventInvalidInput]]"
             allowed-pattern="[[allowedPattern]]"
@@ -105,7 +105,6 @@ iron-icon[invisible] {
             size$="[[size]]"
             autocapitalize$="[[autocapitalize]]"
             autocorrect$="[[autocorrect]]"
-            on-change="_onChange"
             tabindex$="[[tabindex]]"
             autosave$="[[autosave]]"
             results$="[[results]]"
@@ -113,7 +112,7 @@ iron-icon[invisible] {
             multiple$="[[multiple]]">
 
       <content select="[suffix]"></content>
-      <iron-icon icon$="[[_getIcon(value)]]" suffix on-click="_clearInput"></iron-icon>
+      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_clearInput"></iron-icon>
 
       <template is="dom-if" if="[[errorMessage]]">
         <paper-input-error>[[errorMessage]]</paper-input-error>
@@ -124,13 +123,13 @@ iron-icon[invisible] {
       </template>
     </paper-input-container>
 
-<div class="container">
-  <paper-material elevation="1" opened$="{{opened}}" id="menu">
-    <paper-listbox on-click="_onClick">
-      <content id="content"></content>
-    </paper-listbox>
-  </paper-material>
-</div>
+    <div class="container">
+      <paper-material elevation="1" opened$="{{opened}}" id="menu">
+        <paper-listbox on-click="_onClick">
+          <content id="content"></content>
+        </paper-listbox>
+      </paper-material>
+    </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
     <div role="button"></div>
@@ -148,13 +147,33 @@ Polymer({
     },
     _filtereditems: {
       type: Array,
-      computed: "_filterItems(items, value)",
+      computed: "_filterItems(items, immediateValue)",
       observer: "_updateTemplate"
+    },
+    _inputvalue: {
+      type: String,
+      value: "",
+      observer: "_inputvalueChanged"
+    },
+    immediateValue: {
+      type: String,
+      value: "",
+      readOnly: !0,
+      notify: !0
+    },
+    value: {
+      type: String,
+      value: "",
+      observer: "_valueChanged"
     },
     _templateInstance: Object,
     opened: {
       type: Boolean,
       observer: "_openedChanged"
+    },
+    noFreedom: {
+      type: Boolean,
+      value: !1
     },
     animationConfig: {
       type: Object,
@@ -189,17 +208,17 @@ Polymer({
   listeners: {
     "neon-animation-finish": "_onNeonAnimationFinish"
   },
-  _filterItems: function(items, value) {
+  _filterItems: function(items, immediateValue) {
     for (var result = [], i = 0; i < items.length; i++) {
       var include = !1;
-      items[i].value ? include = items[i].value.toLowerCase().indexOf(value) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(value) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
+      items[i].value ? include = items[i].value.toLowerCase().indexOf(immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
       include && result.push(items[i]);
     }
     return result;
   },
   _onClick: function(event) {
     var selectedItem = Polymer.dom(event).localTarget;
-    selectedItem && (this.value = selectedItem.value || selectedItem.label || selectedItem.textContent.trim());
+    selectedItem && (this._inputvalue = selectedItem.value || selectedItem.label || selectedItem.textContent.trim());
   },
   ready: function() {
     var template = Polymer.dom(this).querySelector("template");
@@ -214,13 +233,29 @@ Polymer({
     this.opened ? (this.$.menu.style.display = "block", this.playAnimation("showmenu")) : this.playAnimation("hidemenu");
   },
   _clearInput: function() {
-    this.value = "";
+    this._inputvalue = "";
   },
-  _getIcon: function(value) {
-    return value && "" != value ? "close" : "arrow-drop-down";
+  _getIcon: function(immediateValue) {
+    return immediateValue && "" != immediateValue ? "close" : "arrow-drop-down";
   },
   _onNeonAnimationFinish: function() {
-    this.opened || (this.$.menu.style.display = "none");
+    this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
+  },
+  _handleNewValue: function() {
+    if (1 == this._filtereditems.length && (this._inputvalue = this._filtereditems[0], 
+    this._setImmediateValue(this._inputvalue)), this.noFreedom) {
+      for (var match = !1, i = 0; i < this.items.length; i++) {
+        var item = this.items[i];
+        item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);
+      }
+      match ? this.value = this.immediateValue : this._inputvalue = this.value;
+    } else this.value = this.immediateValue;
+  },
+  _valueChanged: function(newval, oldval) {
+    this._inputvalue = newval, this._setImmediateValue(newval), this._handleNewValue();
+  },
+  _inputvalueChanged: function(value) {
+    this._setImmediateValue(value);
   }
 });
 </script>

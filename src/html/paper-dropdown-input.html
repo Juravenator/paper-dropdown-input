@@ -42,7 +42,7 @@
             aria-describedby$="[[_ariaDescribedBy]]"
             disabled$="[[disabled]]"
             title$="[[title]]"
-            bind-value="{{value}}"
+            bind-value="{{_inputvalue}}"
             invalid="{{invalid}}"
             prevent-invalid-input="[[preventInvalidInput]]"
             allowed-pattern="[[allowedPattern]]"
@@ -65,7 +65,6 @@
             size$="[[size]]"
             autocapitalize$="[[autocapitalize]]"
             autocorrect$="[[autocorrect]]"
-            on-change="_onChange"
             tabindex$="[[tabindex]]"
             autosave$="[[autosave]]"
             results$="[[results]]"
@@ -73,7 +72,7 @@
             multiple$="[[multiple]]">
 
       <content select="[suffix]"></content>
-      <iron-icon icon$="[[_getIcon(value)]]" suffix on-click="_clearInput"></iron-icon>
+      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_clearInput"></iron-icon>
 
       <template is="dom-if" if="[[errorMessage]]">
         <paper-input-error>[[errorMessage]]</paper-input-error>
@@ -84,13 +83,13 @@
       </template>
     </paper-input-container>
 
-<div class="container">
-  <paper-material elevation="1" opened$="{{opened}}" id="menu">
-    <paper-listbox on-click="_onClick">
-      <content id="content"></content>
-    </paper-listbox>
-  </paper-material>
-</div>
+    <div class="container">
+      <paper-material elevation="1" opened$="{{opened}}" id="menu">
+        <paper-listbox on-click="_onClick">
+          <content id="content"></content>
+        </paper-listbox>
+      </paper-material>
+    </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
     <div role="button"></div>

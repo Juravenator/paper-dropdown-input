@@ -19,11 +19,18 @@
   <link rel="import" href="/bower_components/paper-menu/paper-menu.html">
   <link rel="import" href="/bower_components/paper-item/paper-item.html">
   <link rel="import" href="dinosaur-card.html">
+  <style>
+    h3 {
+      margin-bottom: 0;
+    }
+  </style>
 </head>
 
 <body unresolved>
   <template id="template" is="dom-bind">
-    <paper-dropdown-input label="Your favorite dinosaur" items='[[simpleItems]]'></paper-dropdown-input>
+    <h3>Basic input</h3>
+    <paper-dropdown-input label="Your favorite dinosaur" items='[[simpleItems]]' on-value-changed="_test"></paper-dropdown-input>
+    <h3>Fancy input</h3>
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
         <template is="dom-repeat" items="[[items]]" as="item">
@@ -31,10 +38,13 @@
         </template>
       </template>
     </paper-dropdown-input>
+    <h3>No freedom to type something custom</h3>
+    <paper-dropdown-input no-freedom label="Your favorite dinosaur" items='[[simpleItems]]'></paper-dropdown-input>
   </template>
 
   <script>
     var template = document.getElementById('template');
+    template._test = function(e,d) {console.log("value change",e,d);}
     template.addEventListener('dom-change', function() {
       // auto-binding template is ready.
       template.simpleItems = [
