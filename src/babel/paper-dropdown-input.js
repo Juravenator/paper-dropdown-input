@@ -9,16 +9,26 @@ Polymer({
   ],
 
   properties: {
+    /**
+     * The items to show as suggestions.
+     * This is either an array of strings or an array of objects, every object must contain at least the value property.
+     */
     items: {
       type: Array,
       value: []
     },
+    /**
+     * The items remaining after filtering
+     */
     _filtereditems: {
       type: Array,
       computed: '_filterItems(items, immediateValue)',
       observer: '_updateTemplate'
     },
 
+    /**
+     * The value currently in the native input element
+     */
     _inputvalue: {
       type: String,
       value: "",
@@ -45,8 +55,14 @@ Polymer({
       observer: "_valueChanged"
     },
 
+    /**
+     * The stamped instance of your custom template, if present
+     */
     _templateInstance: Object,
 
+    /**
+     * True if the input is currently active and the dropdown menu is opened
+     */
     opened: {
       type: Boolean,
       observer: "_openedChanged"
@@ -95,6 +111,13 @@ Polymer({
     'neon-animation-finish': '_onNeonAnimationFinish'
   },
 
+  /**
+   * Returns a filtered version of items, based on if the array object matched 'immediateValue'
+   *
+   * @param {Array.<Object>} items the array of items to filter
+   * @param {String} immediateValue value to filter with
+   * @return {Array.<Object>} the filtered array
+   */
   _filterItems: function(items, immediateValue) {
     var result = [];
     for (var i = 0; i < items.length; i++) {
@@ -113,6 +136,11 @@ Polymer({
     return result;
   },
 
+  /**
+   * Fired when user clicks inside the dropdown menu.
+   *
+   * @param {Event} event the click event
+   */
   _onClick: function(event) {
     var selectedItem = Polymer.dom(event).localTarget;
     if (selectedItem) {
@@ -120,6 +148,9 @@ Polymer({
     }
   },
 
+  /**
+   * Sets up the template
+   */
   ready: function() {
     var template = Polymer.dom(this).querySelector('template');
     if (!template) {
@@ -132,6 +163,11 @@ Polymer({
     Polymer.dom(this).appendChild(this._templateInstance.root);
     // instance.myProp = 'new value';
   },
+  /**
+   * Updates the stamped template's data
+   *
+   * @param {Array.<Object>} filtereditems the new list to display in the dropdown
+   */
   _updateTemplate: function(filtereditems) {
     if (this._templateInstance) {
       this._templateInstance.items = filtereditems;
@@ -147,7 +183,10 @@ Polymer({
     }
   },
 
-  _clearInput: function() {
+  /**
+   * Clears the current input
+   */
+  clear: function() {
     this._inputvalue= "";
   },
 
@@ -172,6 +211,9 @@ Polymer({
     }
   },
 
+  /**
+   * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
+   */
   _handleNewValue: function() {
     // if there is only one match, we auto-fill it
     if (this._filtereditems.length == 1) {
