@@ -300,9 +300,9 @@ Polymer({
    * @return {Array.<Object>} the filtered array
    */
   _filterItems: function(items, immediateValue) {
-    for (var result = [], i = 0; i < items.length; i++) {
+    for (var result = [], _immediateValue = immediateValue.toLowerCase(), i = 0; i < items.length; i++) {
       var include = !1;
-      items[i].value ? include = items[i].value.toLowerCase().indexOf(immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
+      items[i].value ? include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(_immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
       include && result.push(items[i]);
     }
     return result;
