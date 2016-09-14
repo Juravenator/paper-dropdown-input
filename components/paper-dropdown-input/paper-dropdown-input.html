@@ -1,3 +1,9 @@
+<!--
+@license
+Copyright (c) 2016 Glenn Dirkx. All rights reserved.
+This code may only be used under the MIT style license found at https://github.com/Juravenator/paper-dropdown-input/blob/master/LICENSE
+-->
+
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
 <!-- we're faking a paper-input, so we shamelessly copy its imports  -->
@@ -13,6 +19,58 @@
 <link rel="import" href="/bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="/bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="expand-animation.html">
+
+<!--
+`paper-dropdown-input` is a paper-input that provides the user with input suggestions.
+
+Simple example:
+
+    <paper-dropdown-input label="Your favorite dinosaur" items='["Velociraptor","Deinonychus","Allosaurus","Brontosaurus","Carcharodontosaurus","Diplodocus","T-Rex"]'></paper-dropdown-input>
+
+Custom items example:
+
+    <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
+      <template>
+        <template is="dom-repeat" items="[[items]]" as="item">
+          <dinosaur-card data="[[item]]"></dinosaur-card>
+        </template>
+      </template>
+    </paper-dropdown-input>
+
+where complexItems is:
+
+    var complexItems = [{
+      value: "Velociraptor",
+      avatar: "velociraptor.png",
+      description: "Velociraptor is a genus of dromaeosaurid theropod dinosaur that lived approximately 75 to 71 million years ago during the later part of the Cretaceous Period. Two species are currently recognized, although others have been assigned in the past. The type species is V. mongoliensis; fossils of this species have been discovered in Mongolia. A second species, V. osmolskae, was named in 2008 for skull material from Inner Mongolia, China."
+    }, {
+      value: "Deinonychus",
+      avatar: "deinonychus.png",
+      description: "Deinonychus is a genus of carnivorous dromaeosaurid coelurosaurian dinosaurs, with one described species, Deinonychus antirrhopus. This species, which could grow up to 3.4 metres (11 ft) long, lived during the early Cretaceous Period, about 115–108 million years ago (from the mid-Aptian to early Albian stages). Fossils have been recovered from the U.S. states of Montana, Utah, Wyoming, and Oklahoma, in rocks of the Cloverly Formation, Cedar Mountain Formation and Antlers Formation, though teeth that may belong to Deinonychus have been found much farther east in Maryland."
+    }, {
+      value: "Allosaurus",
+      avatar: "allosaurus.png",
+      description: "Allosaurus is a genus of large theropod dinosaur that lived 155 to 150 million years ago during the late Jurassic period (Kimmeridgian to early Tithonian)."
+    }, {
+      value: "Brontosaurus",
+      avatar: "brontosaurus.png",
+      description: "Brontosaurus , meaning 'thunder lizard', is a genus of sauropod dinosaurs. Originally named by its discoverer Othniel Charles Marsh in 1879, Brontosaurus had long been considered a junior synonym of Apatosaurus; its original species Brontosaurus excelsus was reclassified as A. excelsus in 1903. However, an extensive study published in 2015 by a joint British-Portuguese research team concluded that Brontosaurus was a valid genus of sauropod distinct from Apatosaurus."
+    }, {
+      value: "Carcharodontosaurus",
+      avatar: "carcharodontosaurus.png",
+      description: "Carcharodontosaurus is a genus of carnivorous carcharodontosaurid dinosaurs that existed between 100 and 93 million years ago, during the late Albian to early Cenomanian stages of the mid-Cretaceous Period. It is currently known to include two species, C.saharicus and C.iguidensis, which were among the larger theropods, as large as or slightly bigger than Tyrannosaurus and possibly slightly larger than Giganotosaurus, but not quite as large as Spinosaurus."
+    }, {
+      value: "Diplodocus",
+      avatar: "diplodocus.png",
+      description: "Diplodocus is an extinct genus of diplodocid sauropod dinosaurs whose fossils were first discovered in 1877 by S. W. Williston. The generic name, coined by Othniel Charles Marsh in 1878 in reference to its double-beamed chevron bones located in the underside of the tail. Chevron bones of this particular form were initially believed to be unique to Diplodocus; however, since then they have been discovered in other members of the diplodocid family as well as in nondiplodocid sauropods, such as Mamenchisaurus. It is now common scientific opinion that Seismosaurus hallorum is a species of Diplodocus."
+    }, {
+      value: "T-Rex",
+      avatar: "t-rex.png",
+      description: "Tyrannosaurus, meaning 'tyrant lizard', is a genus of coelurosaurian theropod dinosaur. The species Tyrannosaurus rex (rex meaning 'king' in Latin), is one of the most well-represented of the large theropods. Tyrannosaurus lived throughout what is now western North America, on what was then an island continent known as Laramidia. Tyrannosaurus had a much wider range than other tyrannosaurids. Fossils are found in a variety of rock formations dating to the Maastrichtian age of the upper Cretaceous Period, 68 to 66 million years ago. It was the last known member of the tyrannosaurids, and among the last non-avian dinosaurs to exist before the Cretaceous–Paleogene extinction event."
+    }];
+
+@demo demo/index.html
+-->
 
 <dom-module id="paper-dropdown-input">
   <template>
@@ -61,6 +119,10 @@ paper-material[opened] {
 
 iron-icon[invisible] {
   opacity: 0;
+}
+
+p[grey] {
+  color: grey;
 }
 
 </style>
@@ -112,7 +174,7 @@ iron-icon[invisible] {
             multiple$="[[multiple]]">
 
       <content select="[suffix]"></content>
-      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_clearInput"></iron-icon>
+      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="clear"></iron-icon>
 
       <template is="dom-if" if="[[errorMessage]]">
         <paper-input-error>[[errorMessage]]</paper-input-error>
@@ -124,11 +186,15 @@ iron-icon[invisible] {
     </paper-input-container>
 
     <div class="container">
-      <paper-material elevation="1" opened$="{{opened}}" id="menu">
-        <paper-listbox on-click="_onClick">
-          <content id="content"></content>
-        </paper-listbox>
-      </paper-material>
+
+        <paper-material elevation="1" opened$="{{opened}}" id="menu">
+          <paper-listbox on-click="_onClick">
+            <content id="content"></content>
+            <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
+              <p grey>No results were found</p>
+            </template>
+          </paper-listbox>
+        </paper-material>
     </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
@@ -141,36 +207,62 @@ Polymer({
   is: "paper-dropdown-input",
   behaviors: [ Polymer.IronFormElementBehavior, Polymer.PaperInputBehavior, Polymer.Templatizer, Polymer.NeonAnimationRunnerBehavior ],
   properties: {
+    /**
+     * The items to show as suggestions.
+     * This is either an array of strings or an array of objects, every object must contain at least the value property.
+     */
     items: {
       type: Array,
       value: []
     },
+    /**
+     * The items remaining after filtering
+     */
     _filtereditems: {
       type: Array,
       computed: "_filterItems(items, immediateValue)",
       observer: "_updateTemplate"
     },
+    /**
+     * The value currently in the native input element
+     */
     _inputvalue: {
       type: String,
       value: "",
       observer: "_inputvalueChanged"
     },
+    /**
+     * The immediate value of the input.
+     * This value is updated while the user is typing.
+     */
     immediateValue: {
       type: String,
       value: "",
       readOnly: !0,
       notify: !0
     },
+    /**
+     * The string that represents the current value.
+     */
     value: {
       type: String,
       value: "",
       observer: "_valueChanged"
     },
+    /**
+     * The stamped instance of your custom template, if present
+     */
     _templateInstance: Object,
+    /**
+     * True if the input is currently active and the dropdown menu is opened
+     */
     opened: {
       type: Boolean,
       observer: "_openedChanged"
     },
+    /**
+     * if true, this input doesn't allow any value that does not exist in the 'items' array
+     */
     noFreedom: {
       type: Boolean,
       value: !1
@@ -208,42 +300,73 @@ Polymer({
   listeners: {
     "neon-animation-finish": "_onNeonAnimationFinish"
   },
+  /**
+   * Returns a filtered version of items, based on if the array object matched 'immediateValue'
+   *
+   * @param {Array.<Object>} items the array of items to filter
+   * @param {String} immediateValue value to filter with
+   * @return {Array.<Object>} the filtered array
+   */
   _filterItems: function(items, immediateValue) {
-    for (var result = [], i = 0; i < items.length; i++) {
+    for (var result = [], _immediateValue = immediateValue.toLowerCase(), i = 0; i < items.length; i++) {
       var include = !1;
-      items[i].value ? include = items[i].value.toLowerCase().indexOf(immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
+      items[i].value ? include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(_immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
       include && result.push(items[i]);
     }
     return result;
   },
+  /**
+   * Fired when user clicks inside the dropdown menu.
+   *
+   * @param {Event} event the click event
+   */
   _onClick: function(event) {
     var selectedItem = Polymer.dom(event).localTarget;
     selectedItem && (this._inputvalue = selectedItem.value || selectedItem.label || selectedItem.textContent.trim());
   },
+  /**
+   * Sets up the template
+   */
   ready: function() {
     var template = Polymer.dom(this).querySelector("template");
     template || (template = this.$.menuTemplate), this.templatize(template), this._templateInstance = this.stamp({
       items: this._filtereditems
     }), Polymer.dom(this).appendChild(this._templateInstance.root);
   },
+  /**
+   * Updates the stamped template's data
+   *
+   * @param {Array.<Object>} filtereditems the new list to display in the dropdown
+   */
   _updateTemplate: function(filtereditems) {
     this._templateInstance && (this._templateInstance.items = filtereditems);
   },
   _openedChanged: function(opened) {
     this.opened ? (this.$.menu.style.display = "block", this.playAnimation("showmenu")) : this.playAnimation("hidemenu");
   },
-  _clearInput: function() {
+  /**
+   * Clears the current input
+   */
+  clear: function() {
     this._inputvalue = "";
   },
   _getIcon: function(immediateValue) {
     return immediateValue && "" != immediateValue ? "close" : "arrow-drop-down";
   },
+  /**
+   * Called when animation finishes on the dropdown (when opening or
+   * closing). Responsible for "completing" the process of closing
+   * the dropdown by setting its display to none.
+   */
   _onNeonAnimationFinish: function() {
     this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
   },
+  /**
+   * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
+   */
   _handleNewValue: function() {
     if (1 == this._filtereditems.length && (this._inputvalue = this._filtereditems[0], 
-    this._setImmediateValue(this._inputvalue)), this.noFreedom) {
+    this._setImmediateValue(this._inputvalue)), this.noFreedom && "" != this.immediateValue) {
       for (var match = !1, i = 0; i < this.items.length; i++) {
         var item = this.items[i];
         item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);
@@ -256,6 +379,9 @@ Polymer({
   },
   _inputvalueChanged: function(value) {
     this._setImmediateValue(value);
+  },
+  _arrayIsEmpty: function(array) {
+    return 0 == array.length;
   }
 });
 </script>

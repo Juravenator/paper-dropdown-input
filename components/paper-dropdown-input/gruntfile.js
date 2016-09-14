@@ -147,7 +147,7 @@ module.exports = function(grunt) {
      */
     uglify: {
       options: {
-        preserveComments: 'some',
+        preserveComments: /(?:^\*|@(?:license|preserve|cc_on))/,
         srewIE8: true,
         mangleProperties: false,
         mangle: false,
@@ -167,7 +167,6 @@ module.exports = function(grunt) {
           source_map: null,
           bracketize: false,
           semicolons: true,
-          comments: false,
           shebang: true,
           preserve_line: false,
           screw_ie8: false,
