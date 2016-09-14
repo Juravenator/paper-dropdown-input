@@ -1,0 +1,22 @@
+{
+  "name": "paper-dropdown-input",
+  "homepage": "https://github.com/Juravenator/paper-dropdown-input",
+  "authors": [
+    "Glenn Dirkx <glenn.dirkx@agilians.com>"
+  ],
+  "description": "",
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "iron-component-page": "^1.1.7",
+    "web-component-tester": "^4.3.5"
+  }
+}
