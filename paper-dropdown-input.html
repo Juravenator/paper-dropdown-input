@@ -1,6 +1,4 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/elements/l1ce-theme/l1ce-theme.html">
-<link rel="import" href="/elements/flex-layout/flex-layout.html">
 
 <!-- we're faking a paper-input, so we shamelessly copy its imports  -->
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
@@ -25,8 +23,6 @@
         </template>
 		</template>
 
-    <style include="l1ce-theme"></style>
-    <style include="flex-layout"></style>
     <style>
 :host {
   display: inline-block;
@@ -223,13 +219,7 @@ Polymer({
   _getIcon: function(value) {
     return value && "" != value ? "close" : "arrow-drop-down";
   },
-  /**
-   * Called when animation finishes on the dropdown (when opening or
-   * closing). Responsible for "completing" the process of closing
-   * the dropdown by setting its display to none.
-   */
   _onNeonAnimationFinish: function() {
-    // console.log("animation finished");
     this.opened || (this.$.menu.style.display = "none");
   }
 });
