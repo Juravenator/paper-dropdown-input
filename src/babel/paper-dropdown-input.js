@@ -260,6 +260,10 @@ Polymer({
 
   _inputvalueChanged: function(value) {
     this._setImmediateValue(value);
+  },
+
+  _arrayIsEmpty: function(array) {
+    return array.length == 0;
   }
 
 });

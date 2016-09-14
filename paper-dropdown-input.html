@@ -121,6 +121,10 @@ iron-icon[invisible] {
   opacity: 0;
 }
 
+p[grey] {
+  color: grey;
+}
+
 </style>
 
     <paper-input-container no-label-float="[[noLabelFloat]]"
@@ -182,11 +186,15 @@ iron-icon[invisible] {
     </paper-input-container>
 
     <div class="container">
-      <paper-material elevation="1" opened$="{{opened}}" id="menu">
-        <paper-listbox on-click="_onClick">
-          <content id="content"></content>
-        </paper-listbox>
-      </paper-material>
+
+        <paper-material elevation="1" opened$="{{opened}}" id="menu">
+          <paper-listbox on-click="_onClick">
+            <content id="content"></content>
+            <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
+              <p grey>No results were found</p>
+            </template>
+          </paper-listbox>
+        </paper-material>
     </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
@@ -371,6 +379,9 @@ Polymer({
   },
   _inputvalueChanged: function(value) {
     this._setImmediateValue(value);
+  },
+  _arrayIsEmpty: function(array) {
+    return 0 == array.length;
   }
 });
 </script>
