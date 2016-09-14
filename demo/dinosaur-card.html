@@ -1,5 +1,3 @@
-<link rel="import" href="../../flex-layout/flex-layout.html">
-
 <dom-module id="dinosaur-card">
   <template>
     <style>
@@ -9,6 +7,8 @@
       }
       [horizontal][layout] {
         width: 400px;
+        display: flex;
+        flex-direction: row;
       }
       img {
         width: 100px;
@@ -19,7 +19,6 @@
         border-radius: 100px;
       }
     </style>
-    <style include="flex-layout"></style>
 
     <div horizontal layout>
       <img src="[[data.avatar]]" alt="[[data.name]]" />

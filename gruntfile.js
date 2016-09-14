@@ -147,7 +147,7 @@ module.exports = function(grunt) {
      */
     uglify: {
       options: {
-        preserveComments: true,
+        preserveComments: 'some',
         srewIE8: true,
         mangleProperties: false,
         mangle: false,
