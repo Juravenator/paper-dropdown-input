@@ -358,7 +358,7 @@ Polymer({
    */
   _handleNewValue: function() {
     if (1 == this._filtereditems.length && (this._inputvalue = this._filtereditems[0], 
-    this._setImmediateValue(this._inputvalue)), this.noFreedom) {
+    this._setImmediateValue(this._inputvalue)), this.noFreedom && "" != this.immediateValue) {
       for (var match = !1, i = 0; i < this.items.length; i++) {
         var item = this.items[i];
         item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);

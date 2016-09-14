@@ -223,8 +223,8 @@ Polymer({
 
 
 
-    // just update the value if any input is allowed
-    if (!this.noFreedom) {
+    // just update the value if any input is allowed or if input is blank
+    if (!this.noFreedom || this.immediateValue == "") {
       this.value = this.immediateValue;
 
     // if noFreedom is set, check for valid input and revert invalid input
