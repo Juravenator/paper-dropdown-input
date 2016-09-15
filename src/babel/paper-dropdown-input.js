@@ -115,10 +115,11 @@ Polymer({
 
   /**
    * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
+   *
+   * @param {Number} selectedIndex
    */
   _selectedIndexChanged: function(selectedIndex) {
     if (selectedIndex != undefined && this.items && this.items[selectedIndex]) {
-      console.log("_selectedIndexChanged2");
       // if the selected index does not match the selected value, update the value
       if (this.value != this.items[selectedIndex]) {
         this._setValueByItem(this.items[selectedIndex]);

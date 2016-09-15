@@ -302,10 +302,11 @@ Polymer({
   observers: [ "_selectedIndexChanged(selectedIndex)" ],
   /**
    * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
+   *
+   * @param {Number} selectedIndex
    */
   _selectedIndexChanged: function(selectedIndex) {
-    void 0 != selectedIndex && this.items && this.items[selectedIndex] && (console.log("_selectedIndexChanged2"), 
-    this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]));
+    void 0 != selectedIndex && this.items && this.items[selectedIndex] && this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]);
   },
   /**
    * Returns a filtered version of items, based on if the array object matched 'immediateValue'
