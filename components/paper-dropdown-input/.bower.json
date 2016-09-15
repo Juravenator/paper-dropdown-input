@@ -27,12 +27,12 @@
     "paper-material": "^1.0.6",
     "neon-animation": "^1.2.4"
   },
-  "version": "0.1.2",
-  "_release": "0.1.2",
+  "version": "0.1.3",
+  "_release": "0.1.3",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.2",
-    "commit": "c684419d0ab6518d1c569167347b5d49e1d52c3f"
+    "tag": "0.1.3",
+    "commit": "93140fe96c0598eeb33adcd404988acba7000f29"
   },
   "_source": "https://github.com/Juravenator/paper-dropdown-input.git",
   "_target": "^0.1.0",
