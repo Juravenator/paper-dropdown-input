@@ -142,15 +142,14 @@ where complexItems is:
     </paper-input-container>
 
     <div class="container">
-
-        <paper-material elevation="1" opened$="{{opened}}" id="menu">
-          <paper-listbox on-click="_onClick">
-            <content id="content"></content>
-            <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
-              <p grey>No results were found</p>
-            </template>
-          </paper-listbox>
-        </paper-material>
+      <paper-material elevation="1" opened$="{{opened}}" id="menu">
+        <paper-listbox on-click="_onClick">
+          <content id="content"></content>
+          <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
+            <p grey>No results were found</p>
+          </template>
+        </paper-listbox>
+      </paper-material>
     </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->

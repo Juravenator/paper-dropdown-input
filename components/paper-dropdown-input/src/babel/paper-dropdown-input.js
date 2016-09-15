@@ -111,6 +111,21 @@ Polymer({
     'neon-animation-finish': '_onNeonAnimationFinish'
   },
 
+  observers: ['_selectedIndexChanged(selectedIndex)'],
+
+  /**
+   * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
+   */
+  _selectedIndexChanged: function(selectedIndex) {
+    if (selectedIndex != undefined && this.items && this.items[selectedIndex]) {
+      console.log("_selectedIndexChanged2");
+      // if the selected index does not match the selected value, update the value
+      if (this.value != this.items[selectedIndex]) {
+        this._setValueByItem(this.items[selectedIndex]);
+      }
+    }
+  },
+
   /**
    * Returns a filtered version of items, based on if the array object matched 'immediateValue'
    *
@@ -213,10 +228,15 @@ Polymer({
   },
 
   _setValueByItem: function(item) {
+    this._inputvalue = this._getValueByItem(item);
+  },
+
+  _getValueByItem: function(item) {
     if (typeof item == "string") {
-      this._inputvalue = item;
+      return item;
     } else {
-      this._inputvalue = item.value || item.label || item.textContent.trim();
+      var result = item.value || item.label || item.textContent.trim();
+      return result;
     }
   },
 
@@ -235,6 +255,7 @@ Polymer({
     // just update the value if any input is allowed or if input is blank
     if (!this.noFreedom || this.immediateValue == "") {
       this.value = this.immediateValue;
+      this.selectedIndex = this._getSelectedIndexByValue(this.value);
 
     // if noFreedom is set, check for valid input and revert invalid input
     } else {
@@ -256,6 +277,16 @@ Polymer({
         this._inputvalue = this.value;
       } else {
         this.value = this.immediateValue;
+        this.selectedIndex = this._getSelectedIndexByValue(this.value);
+      }
+    }
+  },
+
+  _getSelectedIndexByValue: function(value) {
+    for (var i = 0; i < this.items.length; i++) {
+      var val = this._getValueByItem(this.items[i]);
+      if (val == value) {
+        return i;
       }
     }
   },
