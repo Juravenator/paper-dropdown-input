@@ -145,7 +145,7 @@ Polymer({
   _onClick: function(event) {
     var selectedItem = Polymer.dom(event).localTarget;
     if (selectedItem) {
-      this._inputvalue = selectedItem.value || selectedItem.label || selectedItem.textContent.trim();
+      this._setValueByItem(selectedItem);
     }
   },
 
@@ -212,13 +212,21 @@ Polymer({
     }
   },
 
+  _setValueByItem: function(item) {
+    if (typeof item == "string") {
+      this._inputvalue = item;
+    } else {
+      this._inputvalue = item.value || item.label || item.textContent.trim();
+    }
+  },
+
   /**
    * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
    */
   _handleNewValue: function() {
     // if there is only one match, we auto-fill it
     if (this._filtereditems.length == 1) {
-      this._inputvalue = this._filtereditems[0];
+      this._setValueByItem(this._filtereditems[0]);
       this._setImmediateValue(this._inputvalue);
     }
 
@@ -254,7 +262,8 @@ Polymer({
 
   _valueChanged: function(newval, oldval) {
     this._inputvalue = newval;
-    this._setImmediateValue(newval);
+    // _inputvalueChanged might not be fired fast enough by observer alone
+    this._inputvalueChanged(newval);
     this._handleNewValue();
   },
 

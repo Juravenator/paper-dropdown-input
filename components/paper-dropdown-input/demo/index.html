@@ -29,7 +29,7 @@
 <body unresolved>
   <template id="template" is="dom-bind">
     <h3>Basic input</h3>
-    <paper-dropdown-input label="Your favorite dinosaur" items='[[simpleItems]]' on-value-changed="_test"></paper-dropdown-input>
+    <paper-dropdown-input label="Your favorite dinosaur" items='[[simpleItems]]'></paper-dropdown-input>
     <h3>Fancy input</h3>
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
@@ -44,7 +44,6 @@
 
   <script>
     var template = document.getElementById('template');
-    template._test = function(e,d) {console.log("value change",e,d);}
     template.addEventListener('dom-change', function() {
       // auto-binding template is ready.
       template.simpleItems = [

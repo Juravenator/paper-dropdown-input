@@ -322,7 +322,7 @@ Polymer({
    */
   _onClick: function(event) {
     var selectedItem = Polymer.dom(event).localTarget;
-    selectedItem && (this._inputvalue = selectedItem.value || selectedItem.label || selectedItem.textContent.trim());
+    selectedItem && this._setValueByItem(selectedItem);
   },
   /**
    * Sets up the template
@@ -361,11 +361,14 @@ Polymer({
   _onNeonAnimationFinish: function() {
     this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
   },
+  _setValueByItem: function(item) {
+    "string" == typeof item ? this._inputvalue = item : this._inputvalue = item.value || item.label || item.textContent.trim();
+  },
   /**
    * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
    */
   _handleNewValue: function() {
-    if (1 == this._filtereditems.length && (this._inputvalue = this._filtereditems[0], 
+    if (1 == this._filtereditems.length && (this._setValueByItem(this._filtereditems[0]), 
     this._setImmediateValue(this._inputvalue)), this.noFreedom && "" != this.immediateValue) {
       for (var match = !1, i = 0; i < this.items.length; i++) {
         var item = this.items[i];
@@ -375,7 +378,7 @@ Polymer({
     } else this.value = this.immediateValue;
   },
   _valueChanged: function(newval, oldval) {
-    this._inputvalue = newval, this._setImmediateValue(newval), this._handleNewValue();
+    this._inputvalue = newval, this._inputvalueChanged(newval), this._handleNewValue();
   },
   _inputvalueChanged: function(value) {
     this._setImmediateValue(value);
