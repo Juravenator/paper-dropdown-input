@@ -76,6 +76,11 @@ Polymer({
       value: false
     },
 
+    selectedIndex: {
+      type: Number,
+      notify: true
+    },
+
     animationConfig: {
       type: Object,
       value: function() {
