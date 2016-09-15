@@ -186,15 +186,14 @@ p[grey] {
     </paper-input-container>
 
     <div class="container">
-
-        <paper-material elevation="1" opened$="{{opened}}" id="menu">
-          <paper-listbox on-click="_onClick">
-            <content id="content"></content>
-            <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
-              <p grey>No results were found</p>
-            </template>
-          </paper-listbox>
-        </paper-material>
+      <paper-material elevation="1" opened$="{{opened}}" id="menu">
+        <paper-listbox on-click="_onClick">
+          <content id="content"></content>
+          <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
+            <p grey>No results were found</p>
+          </template>
+        </paper-listbox>
+      </paper-material>
     </div>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
@@ -300,6 +299,14 @@ Polymer({
   listeners: {
     "neon-animation-finish": "_onNeonAnimationFinish"
   },
+  observers: [ "_selectedIndexChanged(selectedIndex)" ],
+  /**
+   * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
+   */
+  _selectedIndexChanged: function(selectedIndex) {
+    void 0 != selectedIndex && this.items && this.items[selectedIndex] && (console.log("_selectedIndexChanged2"), 
+    this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]));
+  },
   /**
    * Returns a filtered version of items, based on if the array object matched 'immediateValue'
    *
@@ -362,7 +369,12 @@ Polymer({
     this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
   },
   _setValueByItem: function(item) {
-    "string" == typeof item ? this._inputvalue = item : this._inputvalue = item.value || item.label || item.textContent.trim();
+    this._inputvalue = this._getValueByItem(item);
+  },
+  _getValueByItem: function(item) {
+    if ("string" == typeof item) return item;
+    var result = item.value || item.label || item.textContent.trim();
+    return result;
   },
   /**
    * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
@@ -374,8 +386,14 @@ Polymer({
         var item = this.items[i];
         item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);
       }
-      match ? this.value = this.immediateValue : this._inputvalue = this.value;
-    } else this.value = this.immediateValue;
+      match ? (this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value)) : this._inputvalue = this.value;
+    } else this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value);
+  },
+  _getSelectedIndexByValue: function(value) {
+    for (var i = 0; i < this.items.length; i++) {
+      var val = this._getValueByItem(this.items[i]);
+      if (val == value) return i;
+    }
   },
   _valueChanged: function(newval, oldval) {
     this._inputvalue = newval, this._inputvalueChanged(newval), this._handleNewValue();
