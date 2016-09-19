@@ -311,7 +311,7 @@ Polymer({
    * @param {Number} selectedIndex
    */
   _selectedIndexChanged: function(selectedIndex) {
-    void 0 != selectedIndex && this.items && this.items[selectedIndex] && this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]);
+    void 0 == selectedIndex ? this.clear() : this.items && this.items[selectedIndex] && this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]);
   },
   /**
    * Returns a filtered version of items, based on if the array object matched 'immediateValue'

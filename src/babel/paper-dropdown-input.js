@@ -124,7 +124,9 @@ Polymer({
    * @param {Number} selectedIndex
    */
   _selectedIndexChanged: function(selectedIndex) {
-    if (selectedIndex != undefined && this.items && this.items[selectedIndex]) {
+    if (selectedIndex == undefined) {
+      this.clear();
+    } else if (this.items && this.items[selectedIndex]) {
       // if the selected index does not match the selected value, update the value
       if (this.value != this.items[selectedIndex]) {
         this._setValueByItem(this.items[selectedIndex]);
