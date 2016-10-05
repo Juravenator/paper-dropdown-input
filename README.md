@@ -26,3 +26,17 @@ A paper-input that provides the user with input suggestions
 Where `complexItems` is an arry of object, every object must contain at least the `value` property.
 
 <!-- ![example using templates](http://i.imgur.com/FD26RkN.png "example using templates") -->
+
+## Styling
+The items in the dropdown list reside in the light DOM, so you are free to style them however you like.
+
+The actual dropdown-input can be styled as follows:
+
+```css
+:host {
+  --paper-dropdown-input-clear-button-color: green;
+}
+paper-dropdown-input {
+  color: white;
+}
+```

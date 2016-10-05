@@ -45,8 +45,16 @@ iron-icon {
   &[invisible] {
     opacity: 0;
   }
+  color: inherit !important;
+  &[icon="close"] {
+    color: var(--paper-dropdown-input-clear-button-color, red) !important;
+  }
 }
 
 p[grey] {
   color: grey;
+}
+
+paper-input-container input {
+  color: inherit !important;
 }

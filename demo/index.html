@@ -23,6 +23,9 @@
     h3 {
       margin-bottom: 0;
     }
+    [fancy] {
+      color: green;
+    }
   </style>
 </head>
 
@@ -31,7 +34,7 @@
     <h3>Basic input</h3>
     <paper-dropdown-input label="Your favorite dinosaur" items='[[simpleItems]]'></paper-dropdown-input>
     <h3>Fancy input</h3>
-    <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
+    <paper-dropdown-input fancy label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
         <template is="dom-repeat" items="[[items]]" as="item">
           <dinosaur-card data="[[item]]"></dinosaur-card>

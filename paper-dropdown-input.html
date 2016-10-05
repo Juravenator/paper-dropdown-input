@@ -23,11 +23,11 @@ This code may only be used under the MIT style license found at https://github.c
 <!--
 `paper-dropdown-input` is a paper-input that provides the user with input suggestions.
 
-Simple example:
+### Simple example:
 
     <paper-dropdown-input label="Your favorite dinosaur" items='["Velociraptor","Deinonychus","Allosaurus","Brontosaurus","Carcharodontosaurus","Diplodocus","T-Rex"]'></paper-dropdown-input>
 
-Custom items example:
+### Custom items example:
 
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
@@ -68,6 +68,13 @@ where complexItems is:
       avatar: "t-rex.png",
       description: "Tyrannosaurus, meaning 'tyrant lizard', is a genus of coelurosaurian theropod dinosaur. The species Tyrannosaurus rex (rex meaning 'king' in Latin), is one of the most well-represented of the large theropods. Tyrannosaurus lived throughout what is now western North America, on what was then an island continent known as Laramidia. Tyrannosaurus had a much wider range than other tyrannosaurids. Fossils are found in a variety of rock formations dating to the Maastrichtian age of the upper Cretaceous Period, 68 to 66 million years ago. It was the last known member of the tyrannosaurids, and among the last non-avian dinosaurs to exist before the Cretaceous–Paleogene extinction event."
     }];
+
+### Styling
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--paper-dropdown-input-clear-button-color` | Sets the color of the close button | `red`
 
 @demo demo/index.html
 -->
@@ -118,12 +125,24 @@ paper-material[opened] {
   opacity: 1;
 }
 
+iron-icon {
+  color: inherit !important;
+}
+
 iron-icon[invisible] {
   opacity: 0;
 }
 
+iron-icon[icon="close"] {
+  color: var(--paper-dropdown-input-clear-button-color, red) !important;
+}
+
 p[grey] {
   color: grey;
+}
+
+paper-input-container input {
+  color: inherit !important;
 }
 
 </style>
