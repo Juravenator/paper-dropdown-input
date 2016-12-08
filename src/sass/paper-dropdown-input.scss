@@ -6,6 +6,10 @@
 }
 :host([disabled]) {
   pointer-events: none;
+
+  paper-input-container iron-icon {
+    color: #bbbbbb !important;
+  }
 }
 input::-webkit-input-placeholder {
   color: var(--paper-input-container-color, --secondary-text-color);
