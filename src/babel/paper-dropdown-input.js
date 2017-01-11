@@ -143,21 +143,25 @@ Polymer({
    */
   _filterItems: function(items, immediateValue) {
     var result = [];
-    var _immediateValue = immediateValue.toLowerCase();
-    for (var i = 0; i < items.length; i++) {
-      var include = false;
-      if (items[i].value) {
-        include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1;
-      } else if (typeof items[i] === 'string' || items[i] instanceof String) {
-        include = items[i].toLowerCase().indexOf(_immediateValue) > -1;
-      } else {
-        console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property")
+    if (!immediateValue) {
+      return items;
+    } else {
+      var _immediateValue = immediateValue.toLowerCase();
+      for (var i = 0; i < items.length; i++) {
+        var include = false;
+        if (items[i].value) {
+          include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1;
+        } else if (typeof items[i] === 'string' || items[i] instanceof String) {
+          include = items[i].toLowerCase().indexOf(_immediateValue) > -1;
+        } else {
+          console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property")
+        }
+        if (include) {
+          result.push(items[i]);
+        }
       }
-      if (include) {
-        result.push(items[i]);
-      }
+      return result;
     }
-    return result;
   },
 
   /**
