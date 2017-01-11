@@ -1,6 +1,6 @@
 {
   "name": "paper-dropdown-input",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "A paper-input that provides the user with input suggestions",
   "main": "paper-dropdown-input.html",
   "directories": {
