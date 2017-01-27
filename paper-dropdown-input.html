@@ -240,7 +240,8 @@ Polymer({
      */
     items: {
       type: Array,
-      value: []
+      value: [],
+      observer: "_itemsChanged"
     },
     /**
      * The items remaining after filtering
@@ -332,6 +333,12 @@ Polymer({
     "neon-animation-finish": "_onNeonAnimationFinish"
   },
   observers: [ "_selectedIndexChanged(selectedIndex)" ],
+  _itemsChanged: function(items) {
+    var _this = this, match = items.find(function(item) {
+      return item.value == _this.value;
+    });
+    match ? this._inputvalue = match.value : this.noFreedom && (this._inputvalue = "");
+  },
   /**
    * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
    *
@@ -348,14 +355,12 @@ Polymer({
    * @return {Array.<Object>} the filtered array
    */
   _filterItems: function(items, immediateValue) {
-    var result = [];
     if (immediateValue) {
-      for (var _immediateValue = immediateValue.toLowerCase(), i = 0; i < items.length; i++) {
-        var include = !1;
-        items[i].value ? include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1 : "string" == typeof items[i] || items[i] instanceof String ? include = items[i].toLowerCase().indexOf(_immediateValue) > -1 : console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property"), 
-        include && result.push(items[i]);
-      }
-      return result;
+      var _immediateValue = immediateValue.toLowerCase();
+      return items.filter(function(item) {
+        return item.value || "string" == typeof item ? (item.value || item).toLowerCase().indexOf(_immediateValue) > -1 : (console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property"), 
+        !0);
+      });
     }
     return items;
   },
@@ -409,20 +414,18 @@ Polymer({
     this._inputvalue = this._getValueByItem(item);
   },
   _getValueByItem: function(item) {
-    if ("string" == typeof item) return item;
-    var result = item.value || item.label || item.textContent.trim();
-    return result;
+    return "string" == typeof item ? item : item.value || item.label || item.textContent.trim();
   },
   /**
    * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
    */
   _handleNewValue: function() {
+    var _this2 = this;
     if (1 == this._filtereditems.length && (this._setValueByItem(this._filtereditems[0]), 
     this._setImmediateValue(this._inputvalue)), this.noFreedom && "" != this.immediateValue) {
-      for (var match = !1, i = 0; i < this.items.length; i++) {
-        var item = this.items[i];
-        item.value && item.value == this.immediateValue ? match = !0 : ("string" == typeof item || item instanceof String) && item == this.immediateValue && (match = !0);
-      }
+      var match = this.items.some(function(item) {
+        return !(!item.value && "string" != typeof item) && (item.value || item) == _this2.immediateValue;
+      });
       match ? (this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value)) : this._inputvalue = this.value;
     } else this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value);
   },
