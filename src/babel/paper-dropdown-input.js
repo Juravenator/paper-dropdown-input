@@ -155,25 +155,18 @@ Polymer({
    * @return {Array.<Object>} the filtered array
    */
   _filterItems: function(items, immediateValue) {
-    var result = [];
     if (!immediateValue) {
       return items;
     } else {
       var _immediateValue = immediateValue.toLowerCase();
-      for (var i = 0; i < items.length; i++) {
-        var include = false;
-        if (items[i].value) {
-          include = items[i].value.toLowerCase().indexOf(_immediateValue) > -1;
-        } else if (typeof items[i] === 'string' || items[i] instanceof String) {
-          include = items[i].toLowerCase().indexOf(_immediateValue) > -1;
+      return items.filter( item => {
+        if (!item.value && typeof item != "string") {
+          console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property");
+          return true; // everything goes through
         } else {
-          console.error("paper-dropdown-input: item in `items`:", items[i], " is not a string or does not contain `value` property")
+          return (item.value || item).toLowerCase().indexOf(_immediateValue) > -1;
         }
-        if (include) {
-          result.push(items[i]);
-        }
-      }
-      return result;
+      });
     }
   },
 
@@ -232,11 +225,7 @@ Polymer({
   },
 
   _getIcon: function(immediateValue) {
-    if (immediateValue && immediateValue != "") {
-      return "close"
-    } else {
-      return "arrow-drop-down"
-    }
+    return (immediateValue && immediateValue != "") ? "close" : "arrow-drop-down";
   },
 
   /**
@@ -245,7 +234,6 @@ Polymer({
    * the dropdown by setting its display to none.
    */
   _onNeonAnimationFinish: function() {
-    // console.log("animation finished");
     if (!this.opened) {
       this.$.menu.style.display = "none";
       this._handleNewValue();
@@ -260,8 +248,7 @@ Polymer({
     if (typeof item == "string") {
       return item;
     } else {
-      var result = item.value || item.label || item.textContent.trim();
-      return result;
+      return item.value || item.label || item.textContent.trim();
     }
   },
 
@@ -284,18 +271,13 @@ Polymer({
 
     // if noFreedom is set, check for valid input and revert invalid input
     } else {
-      var match = false;
-
-      for (var i = 0; i < this.items.length; i++) {
-        var item = this.items[i];
-        if (item.value && item.value == this.immediateValue) {
-          match = true;
-        } else if (typeof item === 'string' || item instanceof String) {
-          if (item == this.immediateValue) {
-            match = true;
-          }
+      var match = this.items.some( item => {
+        if (!item.value && typeof item != 'string') {
+          return false
+        } else {
+          return (item.value || item) == this.immediateValue;
         }
-      }
+      });
 
       // reset to original value if no match is found
       if (!match) {
