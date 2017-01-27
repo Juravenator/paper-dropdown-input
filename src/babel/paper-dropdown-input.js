@@ -15,7 +15,8 @@ Polymer({
      */
     items: {
       type: Array,
-      value: []
+      value: [],
+      observer: "_itemsChanged"
     },
     /**
      * The items remaining after filtering
@@ -117,6 +118,18 @@ Polymer({
   },
 
   observers: ['_selectedIndexChanged(selectedIndex)'],
+
+  /*
+   * if the items changed, re-evaluate the current value
+   */
+  _itemsChanged: function(items) {
+    var match = items.find(item => item.value == this.value);
+    if (match) {
+      this._inputvalue= match.value;
+    } else if (this.noFreedom) {
+      this._inputvalue= "";
+    }
+  },
 
   /**
    * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
