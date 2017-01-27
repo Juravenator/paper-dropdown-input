@@ -137,7 +137,7 @@ Custom property | Description | Default
             multiple$="[[multiple]]">
 
       <content select="[suffix]"></content>
-      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="clear"></iron-icon>
+      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_iconClicked"></iron-icon>
 
       <template is="dom-if" if="[[errorMessage]]">
         <paper-input-error>[[errorMessage]]</paper-input-error>

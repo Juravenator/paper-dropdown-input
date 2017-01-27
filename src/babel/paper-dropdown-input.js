@@ -217,6 +217,10 @@ Polymer({
     }
   },
 
+  _iconClicked: function() {
+    this.clear();
+    this.$.input.focus();
+  },
   /**
    * Clears the current input
    */
