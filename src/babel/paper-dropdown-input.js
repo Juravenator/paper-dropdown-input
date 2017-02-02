@@ -123,11 +123,13 @@ Polymer({
    * if the items changed, re-evaluate the current value
    */
   _itemsChanged: function(items) {
-    var match = items.find(item => item.value == this.value);
-    if (match) {
-      this._inputvalue= match.value;
-    } else if (this.noFreedom) {
-      this._inputvalue= "";
+    if (items) {
+      var match = items.find(item => item.value == this.value);
+      if (match) {
+        this._inputvalue= match.value;
+      } else if (this.noFreedom) {
+        this._inputvalue= "";
+      }
     }
   },
 
