@@ -4,7 +4,7 @@
   min-width: var(--min-width, 200px);
   // width: var(--min-width, 200px);
 }
-:host([disabled]) {
+:host([disabled]), :host([readonly]) {
   pointer-events: none;
 
   paper-input-container iron-icon {

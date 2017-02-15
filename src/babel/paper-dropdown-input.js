@@ -61,11 +61,17 @@ Polymer({
      */
     _templateInstance: Object,
 
+    _inputFocused: {
+      type: Boolean,
+      observer: "_inputFocusedChanged"
+    },
+
     /**
      * True if the input is currently active and the dropdown menu is opened
      */
     opened: {
       type: Boolean,
+      value: false,
       observer: "_openedChanged"
     },
 
@@ -118,6 +124,12 @@ Polymer({
   },
 
   observers: ['_selectedIndexChanged(selectedIndex)'],
+
+  _inputFocusedChanged(_inputFocused) {
+    if (!this.disabled && !this.readonly) {
+      this.opened = _inputFocused;
+    }
+  },
 
   /*
    * if the items changed, re-evaluate the current value
@@ -220,8 +232,10 @@ Polymer({
   },
 
   _iconClicked: function() {
-    this.clear();
-    this.$.input.focus();
+    if (!this.disabled && !this.readonly) {
+      this.clear();
+      this.$.input.focus();
+    }
   },
   /**
    * Clears the current input
