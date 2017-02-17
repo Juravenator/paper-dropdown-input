@@ -1,34 +1,37 @@
 <!--
 @license
-Copyright (c) 2016 Glenn Dirkx. All rights reserved.
-This code may only be used under the MIT style license found at https://github.com/Juravenator/paper-dropdown-input/blob/master/LICENSE
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-
-<!-- we're faking a paper-input, so we shamelessly copy its imports  -->
-<link rel="import" href="../paper-input/paper-input.html">
-
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-behaviors/iron-button-state.html">
+<link rel="import" href="../iron-behaviors/iron-control-state.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../paper-item/paper-item.html">
-<link rel="import" href="../paper-listbox/paper-listbox.html">
-<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../paper-styles/default-theme.html">
 
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="expand-animation.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-icons.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-shared-styles.html">
 
 <!--
-`paper-dropdown-input` is a paper-input that provides the user with input suggestions.
+`paper-dropdown-input` implements a searchable dropdown menu.
+It is derived from the `paper-dropdown-menu` element, and shares most of its
+functionality.
 
-### Simple example:
-
+Simple example:
     <paper-dropdown-input label="Your favorite dinosaur" items='["Velociraptor","Deinonychus","Allosaurus","Brontosaurus","Carcharodontosaurus","Diplodocus","T-Rex"]'></paper-dropdown-input>
 
-### Custom items example:
-
+Custom content example:
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
         <template is="dom-repeat" items="[[items]]" as="item">
@@ -37,419 +40,558 @@ This code may only be used under the MIT style license found at https://github.c
       </template>
     </paper-dropdown-input>
 
-where complexItems is:
-
-    var complexItems = [{
-      value: "Velociraptor",
-      avatar: "velociraptor.png",
-      description: "Velociraptor is a genus of dromaeosaurid theropod dinosaur that lived approximately 75 to 71 million years ago during the later part of the Cretaceous Period. Two species are currently recognized, although others have been assigned in the past. The type species is V. mongoliensis; fossils of this species have been discovered in Mongolia. A second species, V. osmolskae, was named in 2008 for skull material from Inner Mongolia, China."
-    }, {
-      value: "Deinonychus",
-      avatar: "deinonychus.png",
-      description: "Deinonychus is a genus of carnivorous dromaeosaurid coelurosaurian dinosaurs, with one described species, Deinonychus antirrhopus. This species, which could grow up to 3.4 metres (11 ft) long, lived during the early Cretaceous Period, about 115–108 million years ago (from the mid-Aptian to early Albian stages). Fossils have been recovered from the U.S. states of Montana, Utah, Wyoming, and Oklahoma, in rocks of the Cloverly Formation, Cedar Mountain Formation and Antlers Formation, though teeth that may belong to Deinonychus have been found much farther east in Maryland."
-    }, {
-      value: "Allosaurus",
-      avatar: "allosaurus.png",
-      description: "Allosaurus is a genus of large theropod dinosaur that lived 155 to 150 million years ago during the late Jurassic period (Kimmeridgian to early Tithonian)."
-    }, {
-      value: "Brontosaurus",
-      avatar: "brontosaurus.png",
-      description: "Brontosaurus , meaning 'thunder lizard', is a genus of sauropod dinosaurs. Originally named by its discoverer Othniel Charles Marsh in 1879, Brontosaurus had long been considered a junior synonym of Apatosaurus; its original species Brontosaurus excelsus was reclassified as A. excelsus in 1903. However, an extensive study published in 2015 by a joint British-Portuguese research team concluded that Brontosaurus was a valid genus of sauropod distinct from Apatosaurus."
-    }, {
-      value: "Carcharodontosaurus",
-      avatar: "carcharodontosaurus.png",
-      description: "Carcharodontosaurus is a genus of carnivorous carcharodontosaurid dinosaurs that existed between 100 and 93 million years ago, during the late Albian to early Cenomanian stages of the mid-Cretaceous Period. It is currently known to include two species, C.saharicus and C.iguidensis, which were among the larger theropods, as large as or slightly bigger than Tyrannosaurus and possibly slightly larger than Giganotosaurus, but not quite as large as Spinosaurus."
-    }, {
-      value: "Diplodocus",
-      avatar: "diplodocus.png",
-      description: "Diplodocus is an extinct genus of diplodocid sauropod dinosaurs whose fossils were first discovered in 1877 by S. W. Williston. The generic name, coined by Othniel Charles Marsh in 1878 in reference to its double-beamed chevron bones located in the underside of the tail. Chevron bones of this particular form were initially believed to be unique to Diplodocus; however, since then they have been discovered in other members of the diplodocid family as well as in nondiplodocid sauropods, such as Mamenchisaurus. It is now common scientific opinion that Seismosaurus hallorum is a species of Diplodocus."
-    }, {
-      value: "T-Rex",
-      avatar: "t-rex.png",
-      description: "Tyrannosaurus, meaning 'tyrant lizard', is a genus of coelurosaurian theropod dinosaur. The species Tyrannosaurus rex (rex meaning 'king' in Latin), is one of the most well-represented of the large theropods. Tyrannosaurus lived throughout what is now western North America, on what was then an island continent known as Laramidia. Tyrannosaurus had a much wider range than other tyrannosaurids. Fossils are found in a variety of rock formations dating to the Maastrichtian age of the upper Cretaceous Period, 68 to 66 million years ago. It was the last known member of the tyrannosaurids, and among the last non-avian dinosaurs to exist before the Cretaceous–Paleogene extinction event."
-    }];
-
 ### Styling
-The following custom properties and mixins are available for styling:
+Styling is exactly the same as the `paper-dropdown-menu` element:
 
 Custom property | Description | Default
 ----------------|-------------|----------
-`--paper-dropdown-input-clear-button-color` | Sets the color of the close button | `red`
-
+`--paper-dropdown-menu` | A mixin that is applied to the element host | `{}`
+`--paper-dropdown-menu-disabled` | A mixin that is applied to the element host when disabled | `{}`
+`--paper-dropdown-menu-ripple` | A mixin that is applied to the internal ripple | `{}`
+`--paper-dropdown-menu-button` | A mixin that is applied to the internal menu button | `{}`
+`--paper-dropdown-menu-input` | A mixin that is applied to the internal paper input | `{}`
+`--paper-dropdown-menu-icon` | A mixin that is applied to the internal icon | `{}`
+You can also use any of the `paper-input-container` and `paper-menu-button`
+style mixins and custom properties to style the internal input and menu button
+respectively.
+@group Paper Elements
+@element paper-dropdown-input
 @demo demo/index.html
 -->
 
 <dom-module id="paper-dropdown-input">
   <template>
-
-    <template id="menuTemplate">
-        <template is="dom-repeat" items="[[items]]" as="item">
-          <paper-item>[[item]]</paper-item>
-        </template>
-		</template>
+    <style include="paper-dropdown-menu-shared-styles"></style>
 
     <style>
-:host {
-  display: inline-block;
-  min-width: var(--min-width, 200px);
-}
-
-:host([disabled]) {
-  pointer-events: none;
-}
-
-:host([disabled]) paper-input-container iron-icon {
-  color: #bbbbbb !important;
-}
-
-input::-webkit-input-placeholder {
-  color: var(--paper-input-container-color, --secondary-text-color);
-}
-
-input:-moz-placeholder {
-  color: var(--paper-input-container-color, --secondary-text-color);
-}
-
-input::-moz-placeholder {
-  color: var(--paper-input-container-color, --secondary-text-color);
-}
-
-input:-ms-input-placeholder {
-  color: var(--paper-input-container-color, --secondary-text-color);
-}
-
-paper-material {
-  min-width: var(--min-width, 200px);
-  position: absolute;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: auto;
-  z-index: 10;
-  opacity: 0;
-  background-color: white;
-}
-
-paper-material[opened] {
-  opacity: 1;
-}
-
-iron-icon {
-  color: inherit !important;
-}
-
-iron-icon[invisible] {
-  opacity: 0;
-}
-
-iron-icon[icon="close"] {
-  color: var(--paper-dropdown-input-clear-button-color, red) !important;
-}
-
-p[grey] {
-  color: grey;
-}
-
-paper-input-container input {
-  color: inherit !important;
-}
-
-</style>
-
-    <paper-input-container no-label-float="[[noLabelFloat]]"
-                           always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
-                           auto-validate$="[[autoValidate]]"
-                           disabled$="[[disabled]]"
-                           invalid="[[invalid]]"
-                           focused="{{opened}}"
-                           class="dropdown-trigger">
-
-      <content select="[prefix]"></content>
-
-      <label hidden$="[[!label]]" aria-hidden="true">[[label]]</label>
-
-      <input is="iron-input" id="input"
-            aria-labelledby$="[[_ariaLabelledBy]]"
-            aria-describedby$="[[_ariaDescribedBy]]"
-            disabled$="[[disabled]]"
-            title$="[[title]]"
-            bind-value="{{_inputvalue}}"
-            invalid="{{invalid}}"
-            prevent-invalid-input="[[preventInvalidInput]]"
-            allowed-pattern="[[allowedPattern]]"
-            validator="[[validator]]"
-            type$="[[type]]"
-            pattern$="[[pattern]]"
-            required$="[[required]]"
-            autocomplete$="[[autocomplete]]"
-            autofocus$="[[autofocus]]"
-            inputmode$="[[inputmode]]"
-            minlength$="[[minlength]]"
-            maxlength$="[[maxlength]]"
-            min$="[[min]]"
-            max$="[[max]]"
-            step$="[[step]]"
-            name$="[[name]]"
-            placeholder$="[[placeholder]]"
-            readonly$="[[readonly]]"
-            list$="[[list]]"
-            size$="[[size]]"
-            autocapitalize$="[[autocapitalize]]"
-            autocorrect$="[[autocorrect]]"
-            tabindex$="[[tabindex]]"
-            autosave$="[[autosave]]"
-            results$="[[results]]"
-            accept$="[[accept]]"
-            multiple$="[[multiple]]">
-
-      <content select="[suffix]"></content>
-      <iron-icon icon$="[[_getIcon(immediateValue)]]" suffix on-click="_iconClicked"></iron-icon>
-
-      <template is="dom-if" if="[[errorMessage]]">
-        <paper-input-error>[[errorMessage]]</paper-input-error>
-      </template>
-
-      <template is="dom-if" if="[[charCounter]]">
-        <paper-input-char-counter></paper-input-char-counter>
-      </template>
-    </paper-input-container>
-
-    <div class="container">
-      <paper-material elevation="1" opened$="{{opened}}" id="menu">
-        <paper-listbox on-click="_onClick">
-          <content id="content"></content>
-          <template is="dom-if" if="[[_arrayIsEmpty(_filtereditems)]]">
-            <p grey>No results were found</p>
-          </template>
-        </paper-listbox>
-      </paper-material>
-    </div>
-
-    <!-- this div fulfills an a11y requirement for combobox, do not remove -->
-    <div role="button"></div>
-  </template>
-  <script>
-"use strict";
-
-Polymer({
-  is: "paper-dropdown-input",
-  behaviors: [ Polymer.IronFormElementBehavior, Polymer.PaperInputBehavior, Polymer.Templatizer, Polymer.NeonAnimationRunnerBehavior ],
-  properties: {
-    /**
-     * The items to show as suggestions.
-     * This is either an array of strings or an array of objects, every object must contain at least the value property.
-     */
-    items: {
-      type: Array,
-      value: [],
-      observer: "_itemsChanged"
-    },
-    /**
-     * The items remaining after filtering
-     */
-    _filtereditems: {
-      type: Array,
-      computed: "_filterItems(items, immediateValue)",
-      observer: "_updateTemplate"
-    },
-    /**
-     * The value currently in the native input element
-     */
-    _inputvalue: {
-      type: String,
-      value: "",
-      observer: "_inputvalueChanged"
-    },
-    /**
-     * The immediate value of the input.
-     * This value is updated while the user is typing.
-     */
-    immediateValue: {
-      type: String,
-      value: "",
-      readOnly: !0,
-      notify: !0
-    },
-    /**
-     * The string that represents the current value.
-     */
-    value: {
-      type: String,
-      value: "",
-      observer: "_valueChanged"
-    },
-    /**
-     * The stamped instance of your custom template, if present
-     */
-    _templateInstance: Object,
-    /**
-     * True if the input is currently active and the dropdown menu is opened
-     */
-    opened: {
-      type: Boolean,
-      observer: "_openedChanged"
-    },
-    /**
-     * if true, this input doesn't allow any value that does not exist in the 'items' array
-     */
-    noFreedom: {
-      type: Boolean,
-      value: !1
-    },
-    selectedIndex: {
-      type: Number,
-      notify: !0
-    },
-    animationConfig: {
-      type: Object,
-      value: function() {
-        return {
-          showmenu: [ {
-            name: "fade-in-animation",
-            node: this.$.menu,
-            timing: {
-              delay: 150,
-              duration: 50
-            }
-          }, {
-            name: "expand-animation",
-            node: this.$.menu,
-            timing: {
-              delay: 150,
-              duration: 200
-            }
-          } ],
-          hidemenu: [ {
-            name: "fade-out-animation",
-            node: this.$.menu,
-            timing: {
-              duration: 200
-            }
-          } ]
+      :host ::content hr {
+        border-top: 1px solid var(--disabled-text-color);
+        border-bottom: none;
+        opacity: .5;
+      }
+      .dropdown-content > paper-input {
+        padding-left: 1em;
+        --paper-input-container-input-color: black;
+        --paper-input-container-underline: {
+          display: none;
+        };
+        --paper-input-container-underline-focus: {
+          display: none;
+        };
+        --paper-input-container: {
+          padding: 0;
         };
       }
-    }
-  },
-  listeners: {
-    "neon-animation-finish": "_onNeonAnimationFinish"
-  },
-  observers: [ "_selectedIndexChanged(selectedIndex)" ],
-  _itemsChanged: function(items) {
-    var _this = this;
-    if (items) {
-      var match = items.find(function(item) {
-        return item.value == _this.value;
+      [search-bar] {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      [search-bar] input {
+        border: none;
+        flex: 1;
+        outline: none;
+        font-size: 1em;
+        min-width: 0;
+        margin-bottom: 3px;
+      }
+      [search-bar] iron-icon {
+        margin-left: 1em;
+      }
+    </style>
+
+    <!-- this div fulfills an a11y requirement for combobox, do not remove -->
+    <span role="button"></span>
+    <paper-menu-button
+      id="menuButton"
+      vertical-align="[[verticalAlign]]"
+      horizontal-align="[[horizontalAlign]]"
+      dynamic-align="[[dynamicAlign]]"
+      vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]"
+      disabled="[[_disabledOrReadonly(disabled, readonly)]]"
+      no-animations="[[noAnimations]]"
+      on-iron-select="_onIronSelect"
+      on-iron-deselect="_onIronDeselect"
+      opened="{{opened}}"
+      close-on-activate
+      no-overlap
+      allow-outside-scroll="[[allowOutsideScroll]]"
+      restore-focus-on-close="[[restoreFocusOnClose]]">
+      <div class="dropdown-trigger">
+        <paper-ripple></paper-ripple>
+        <!-- paper-input has type="text" for a11y, do not remove -->
+        <paper-input
+          type="text"
+          invalid="[[invalid]]"
+          readonly
+          disabled="[[disabled]]"
+          value="[[selectedItemLabel]]"
+          placeholder="[[placeholder]]"
+          error-message="[[errorMessage]]"
+          always-float-label="[[alwaysFloatLabel]]"
+          no-label-float="[[noLabelFloat]]"
+          label="[[label]]">
+          <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix></iron-icon>
+        </paper-input>
+      </div>
+      <paper-listbox class="dropdown-content"
+                     id="menu"
+                     on-tap="_doubleCheck"
+                     selectable="[[selectable]]"
+                     stop-keyboard-event-propagation>
+
+        <div search-bar on-tap="_stopEvent" disabled>
+          <iron-icon icon="search"></iron-icon>
+          <input id="searchInput" is="iron-input" bind-value="{{searchValue}}">
+          <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
+        </div>
+
+        <content id="content"></content>
+        <template is="dom-if" if="[[!_filtereditems.length]]">
+          <p grey>No results were found</p>
+        </template>
+      </paper-listbox>
+    </paper-menu-button>
+
+
+
+    <template id="menuTemplate">
+      <template default is="dom-repeat" items="[[items]]" as="item">
+        <paper-item>[[item]]</paper-item>
+      </template>
+		</template>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      Polymer({
+        is: 'paper-dropdown-input',
+        behaviors: [
+          Polymer.IronButtonState,
+          Polymer.IronControlState,
+          Polymer.IronFormElementBehavior,
+          Polymer.Templatizer,
+          Polymer.IronValidatableBehavior
+        ],
+        properties: {
+          /**
+           * The derived "label" of the currently selected item. This value
+           * is the `label` property on the selected item if set, or else the
+           * trimmed text content of the selected item.
+           */
+          selectedItemLabel: {
+            type: String,
+            notify: true
+          },
+          /**
+           * The last selected item. An item is selected if the dropdown menu has
+           * a child with class `dropdown-content`, and that child triggers an
+           * `iron-select` event with the selected `item` in the `detail`.
+           *
+           * @type {?Object}
+           */
+          selectedItem: {
+            type: Object,
+            notify: true,
+            readOnly: true
+          },
+          /**
+           * The value for this element that will be used when submitting in
+           * a form. It is read only, and will always have the same value
+           * as `selectedItemLabel`.
+           */
+          value: {
+            type: String,
+            notify: true,
+            observer: "_valueChanged"
+          },
+          /**
+           * The label for the dropdown.
+           */
+          label: {
+            type: String
+          },
+          /**
+           * The placeholder for the dropdown.
+           */
+          placeholder: {
+            type: String
+          },
+          /**
+           * The error message to display when invalid.
+           */
+          errorMessage: {
+              type: String
+          },
+          /**
+           * True if the dropdown is open. Otherwise, false.
+           */
+          opened: {
+            type: Boolean,
+            notify: true,
+            value: false,
+            observer: '_openedChanged'
+          },
+          /**
+           * By default, the dropdown will constrain scrolling on the page
+           * to itself when opened.
+           * Set to true in order to prevent scroll from being constrained
+           * to the dropdown when it opens.
+           */
+          allowOutsideScroll: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Set to true to disable the floating label. Bind this to the
+           * `<paper-input-container>`'s `noLabelFloat` property.
+           */
+          noLabelFloat: {
+              type: Boolean,
+              value: false,
+              reflectToAttribute: true
+          },
+          /**
+           * Set to true to always float the label. Bind this to the
+           * `<paper-input-container>`'s `alwaysFloatLabel` property.
+           */
+          alwaysFloatLabel: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Set to true to disable animations when opening and closing the
+           * dropdown.
+           */
+          noAnimations: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * The orientation against which to align the menu dropdown
+           * horizontally relative to the dropdown trigger.
+           */
+          horizontalAlign: {
+            type: String,
+            value: 'left'
+          },
+          /**
+           * The orientation against which to align the menu dropdown
+           * vertically relative to the dropdown trigger.
+           */
+          verticalAlign: {
+            type: String,
+            value: 'top'
+          },
+          /**
+           * If true, the `horizontalAlign` and `verticalAlign` properties will
+           * be considered preferences instead of strict requirements when
+           * positioning the dropdown and may be changed if doing so reduces
+           * the area of the dropdown falling outside of `fitInto`.
+           */
+          dynamicAlign: {
+            type: Boolean
+          },
+
+          /**
+           * Whether focus should be restored to the dropdown when the menu closes.
+           */
+          restoreFocusOnClose: {
+            type: Boolean,
+            value: true
+          },
+
+
+          items: {
+            type: Array
+          },
+          searchValue: {
+            type: String,
+            value: ""
+          },
+          filter: {
+            type: Function,
+            value: function() {
+              return function(items, searchValue) {
+                if (!searchValue) {
+                  return items;
+                } else {
+                  var _searchValue = searchValue.toLowerCase();
+                  return items.filter( item => {
+                    if (!item.value && typeof item != "string") {
+                      console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property");
+                      return true; // everything goes through
+                    } else {
+                      return (item.value || item).toLowerCase().indexOf(_searchValue) > -1;
+                    }
+                  });
+                }
+              }
+            }
+          },
+          _filtereditems: {
+            type: Array,
+            computed: "_filterItems(items, searchValue)"
+          },
+
+          readonly: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          selectable: {
+            type: String
+          }
+        },
+        listeners: {
+          'tap': '_onTap',
+          'dom-change': '_refit'
+          // 'neon-animation-finish': '_focusSearch'
+        },
+        keyBindings: {
+          'up down': 'open',
+          'esc': 'close'
+        },
+        hostAttributes: {
+          role: 'combobox',
+          'aria-autocomplete': 'none',
+          'aria-haspopup': 'true'
+        },
+        observers: [
+          '_selectedItemChanged(selectedItem)',
+          '_updateTemplate(_filtereditems)',
+          '_updateSelectedItem(items.length, selectedItemLabel)'
+        ],
+        attached: function() {
+          // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
+          // child will cause an `iron-select` event to fire while the element is
+          // still in a `DocumentFragment`. This has the effect of causing
+          // handlers not to fire. So, we double check this value on attached:
+          var contentElement = this.contentElement;
+          if (contentElement && contentElement.selectedItem) {
+            this._setSelectedItem(contentElement.selectedItem);
+          }
+          this._setupTemplate();
+        },
+        /**
+         * The content element that is contained by the dropdown menu, if any.
+         */
+        get contentElement() {
+          return this.$.menu;
+        },
+        /**
+         * Show the dropdown content.
+         */
+        open: function() {
+          this.$.menuButton.open();
+        },
+        /**
+         * Hide the dropdown content.
+         */
+        close: function() {
+          this.$.menuButton.close();
+        },
+        /**
+         * A handler that is called when `iron-select` is fired.
+         *
+         * @param {CustomEvent} event An `iron-select` event.
+         */
+        _onIronSelect: function(event) {
+          this._setSelectedItem(event.detail.item);
+        },
+        /**
+         * A handler that is called when `iron-deselect` is fired.
+         *
+         * @param {CustomEvent} event An `iron-deselect` event.
+         */
+        _onIronDeselect: function(event) {
+          this._setSelectedItem(null);
+        },
+        /**
+         * A handler that is called when the dropdown is tapped.
+         *
+         * @param {CustomEvent} event A tap event.
+         */
+        _onTap: function(event) {
+          if (Polymer.Gestures.findOriginalTarget(event) === this) {
+            this.open();
+          }
+        },
+        /**
+         * Compute the label for the dropdown given a selected item.
+         *
+         * @param {Element} selectedItem A selected Element item, with an
+         * optional `label` property.
+         */
+        _selectedItemChanged: function(selectedItem) {
+          if (this.opened) { // user is searching
+            return;
+          }
+          var value = '';
+          if (!selectedItem) {
+            value = '';
+          } else {
+            value = selectedItem.label || selectedItem.getAttribute('label') || selectedItem.textContent.trim();
+          }
+          // console.log("_selectedItemChanged", value, this.selectedItemLabel);
+          if (!value && this.selectedItemLabel) { // selected item re-appeared in _filteredItems
+            return;
+          }
+          // this._setValue(value);
+          this.value = value;
+          // this._setSelectedItemLabel(value);
+          this.selectedItemLabel = value;
+        },
+        /**
+         * Compute the vertical offset of the menu based on the value of
+         * `noLabelFloat`.
+         *
+         * @param {boolean} noLabelFloat True if the label should not float
+         * above the input, otherwise false.
+         */
+        _computeMenuVerticalOffset: function(noLabelFloat) {
+          // NOTE(cdata): These numbers are somewhat magical because they are
+          // derived from the metrics of elements internal to `paper-input`'s
+          // template. The metrics will change depending on whether or not the
+          // input has a floating label.
+          return noLabelFloat ? -4 : 8;
+        },
+        /**
+         * Returns false if the element is required and does not have a selection,
+         * and true otherwise.
+         * @param {*=} _value Ignored.
+         * @return {boolean} true if `required` is false, or if `required` is true
+         * and the element has a valid selection.
+         */
+        _getValidity: function(_value) {
+          return this.disabled || !this.required || (this.required && !!this.value);
+        },
+        _openedChanged: function() {
+          var openState = this.opened ? 'true' : 'false';
+          var e = this.contentElement;
+          if (e) {
+            e.setAttribute('aria-expanded', openState);
+          }
+          if (openState) {
+            setTimeout(this._focusSearch.bind(this), 100);
+          }
+        },
+
+
+
+
+        _focusSearch: function() {
+          this.$.searchInput.focus();
+          this.$.searchInput.select();
+        },
+
+        /**
+         * Sets up the template
+         */
+        _setupTemplate: function() {
+          // when the user clears the search field, the selectedItem is null
+          // this causes an iron-select event causing the dropdown to close
+          this.$.menuButton._onIronSelect = function(event) {
+            // console.log("_onIronSelect");
+            var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
+            if (!value && this.selectedItemLabel) {
+              return;
+            }
+            // console.log("_onIronSelect2", value, this.selectedItemLabel);
+            if (!this.ignoreSelect) {
+              this.$.menuButton.close();
+            }
+          }.bind(this);
+
+          // normally a user can select an option by typign the first letter
+          // this clashes with the search field
+          this.$.menu._focusWithKeyboardEvent = function() {};
+
+          var template = Polymer.dom(this).querySelector('template') || this.$.menuTemplate;
+          this.templatize(template);
+          this._templateInstance = this.stamp({
+            items: this._filtereditems
+          });
+          var dom = Polymer.dom(this);
+          dom.appendChild(this._templateInstance.root);
+          // dom.insertBefore(this._templateInstance.root, dom.firstChild);
+        },
+
+        /**
+         * Updates the stamped template's data
+         *
+         * @param {Array.<Object>} filtereditems the new list to display in the dropdown
+         */
+        _updateTemplate: function(filtereditems) {
+          // console.log("_updateTemplate", filtereditems);
+          if (this._templateInstance) {
+            this._templateInstance.items = filtereditems;
+          }
+        },
+
+        _refit: function() {
+          if (this.opened) {
+            this.$.menuButton.$.dropdown.refit();
+          }
+        },
+
+        /**
+         * Returns a filtered version of items, based on if the array object matched 'searchValue'
+         *
+         * @param {Array.<Object>} items the array of items to filter
+         * @param {String} searchValue value to filter with
+         * @return {Array.<Object>} the filtered array
+         */
+        _filterItems: function(items, searchValue) {
+          // console.log("_filterItems", items, searchValue);
+          return this.filter(items, searchValue);
+        },
+
+        _stopEvent: function(event) {
+          event.stopPropagation();
+        },
+
+        clearSearch: function(event) {
+          event && this._stopEvent(event);
+          this.searchValue = "";
+          this._focusSearch();
+        },
+
+        _updateSelectedItem: function(itemsLength, selectedItemLabel) {
+          // console.log("_updateSelectedItem", selectedItemLabel);
+          var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
+          if (!value && selectedItemLabel) {
+            var index = this.items.findIndex(item => (item.value || item) == selectedItemLabel);
+            // console.log("found", index);
+            index > -1 && this.$.menu.select(index+1); // search bar takes an index
+          }
+        },
+
+        _valueChanged: function(value) {
+          this.selectedItemLabel = value;
+          // console.log("_valueChanged", value);
+        },
+
+        _disabledOrReadonly: function(disabled, readonly) {
+          return disabled || readonly;
+        },
+
+        /*
+         * selectedItem can get screwed up.
+         * say you selected the first item in the list, and you start searching.
+         * You click the first item in the filtered list, the change will not
+         * get picked up. This fixed this edge case.
+         */
+        _doubleCheck: function() {
+          // console.log("_doubleCheck", this.selectedItem, this.selectedItemLabel);
+          var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
+          if (value != this.selectedItemLabel) {
+            this.selectedItemLabel = value;
+          }
+        }
       });
-      match ? this._inputvalue = match.value : this.noFreedom && (this._inputvalue = "");
-    }
-  },
-  /**
-   * Fires when selectedIndex changes, used to respond to externally triggered changes (el.selectedIndex = x)
-   *
-   * @param {Number} selectedIndex
-   */
-  _selectedIndexChanged: function(selectedIndex) {
-    void 0 == selectedIndex ? this.clear() : this.items && this.items[selectedIndex] && this.value != this.items[selectedIndex] && this._setValueByItem(this.items[selectedIndex]);
-  },
-  /**
-   * Returns a filtered version of items, based on if the array object matched 'immediateValue'
-   *
-   * @param {Array.<Object>} items the array of items to filter
-   * @param {String} immediateValue value to filter with
-   * @return {Array.<Object>} the filtered array
-   */
-  _filterItems: function(items, immediateValue) {
-    if (immediateValue) {
-      var _immediateValue = immediateValue.toLowerCase();
-      return items.filter(function(item) {
-        return item.value || "string" == typeof item ? (item.value || item).toLowerCase().indexOf(_immediateValue) > -1 : (console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property"), 
-        !0);
-      });
-    }
-    return items;
-  },
-  /**
-   * Fired when user clicks inside the dropdown menu.
-   *
-   * @param {Event} event the click event
-   */
-  _onClick: function(event) {
-    var selectedItem = Polymer.dom(event).localTarget;
-    selectedItem && this._setValueByItem(selectedItem);
-  },
-  /**
-   * Sets up the template
-   */
-  ready: function() {
-    var template = Polymer.dom(this).querySelector("template");
-    template || (template = this.$.menuTemplate), this.templatize(template), this._templateInstance = this.stamp({
-      items: this._filtereditems
-    }), Polymer.dom(this).appendChild(this._templateInstance.root);
-  },
-  /**
-   * Updates the stamped template's data
-   *
-   * @param {Array.<Object>} filtereditems the new list to display in the dropdown
-   */
-  _updateTemplate: function(filtereditems) {
-    this._templateInstance && (this._templateInstance.items = filtereditems);
-  },
-  _openedChanged: function(opened) {
-    this.opened ? (this.$.menu.style.display = "block", this.playAnimation("showmenu")) : this.playAnimation("hidemenu");
-  },
-  _iconClicked: function() {
-    this.clear(), this.$.input.focus();
-  },
-  /**
-   * Clears the current input
-   */
-  clear: function() {
-    this._inputvalue = "";
-  },
-  _getIcon: function(immediateValue) {
-    return immediateValue && "" != immediateValue ? "close" : "arrow-drop-down";
-  },
-  /**
-   * Called when animation finishes on the dropdown (when opening or
-   * closing). Responsible for "completing" the process of closing
-   * the dropdown by setting its display to none.
-   */
-  _onNeonAnimationFinish: function() {
-    this.opened || (this.$.menu.style.display = "none", this._handleNewValue());
-  },
-  _setValueByItem: function(item) {
-    this._inputvalue = this._getValueByItem(item);
-  },
-  _getValueByItem: function(item) {
-    return "string" == typeof item ? item : item.value || item.label || item.textContent.trim();
-  },
-  /**
-   * Processes a new value in 'immediateValue', updates 'value' if allowed (see noFreedom option)
-   */
-  _handleNewValue: function() {
-    var _this2 = this;
-    if (1 == this._filtereditems.length && (this._setValueByItem(this._filtereditems[0]), 
-    this._setImmediateValue(this._inputvalue)), this.noFreedom && "" != this.immediateValue) {
-      var match = this.items.some(function(item) {
-        return !(!item.value && "string" != typeof item) && (item.value || item) == _this2.immediateValue;
-      });
-      match ? (this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value)) : this._inputvalue = this.value;
-    } else this.value = this.immediateValue, this.selectedIndex = this._getSelectedIndexByValue(this.value);
-  },
-  _getSelectedIndexByValue: function(value) {
-    for (var i = 0; i < this.items.length; i++) {
-      var val = this._getValueByItem(this.items[i]);
-      if (val == value) return i;
-    }
-  },
-  _valueChanged: function(newval, oldval) {
-    this._inputvalue = newval, this._inputvalueChanged(newval), this._handleNewValue();
-  },
-  _inputvalueChanged: function(value) {
-    this._setImmediateValue(value);
-  },
-  _arrayIsEmpty: function(array) {
-    return 0 == array.length;
-  }
-});
-</script>
+    })();
+  </script>
 </dom-module>
