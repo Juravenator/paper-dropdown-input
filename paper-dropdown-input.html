@@ -307,7 +307,8 @@ respectively.
 
 
           items: {
-            type: Array
+            type: Array,
+            value: function() {return []}
           },
           searchValue: {
             type: String,
@@ -551,7 +552,7 @@ respectively.
          */
         _filterItems: function(items, searchValue) {
           // console.log("_filterItems", items, searchValue);
-          return this.filter(items, searchValue);
+          return this.filter ? this.filter(items, searchValue) : items;
         },
 
         _stopEvent: function(event) {
@@ -565,12 +566,11 @@ respectively.
         },
 
         _updateSelectedItem: function(itemsLength, selectedItemLabel) {
-          // console.log("_updateSelectedItem", selectedItemLabel);
-          var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
+          var displayValue = this.selectedItem && this.selectedItem.textContent.trim();
+          var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
           if (!value && selectedItemLabel) {
-            var index = this.items.findIndex(item => (item.value || item) == selectedItemLabel);
-            // console.log("found", index);
-            index > -1 && this.$.menu.select(index+1); // search bar takes an index
+            var index = this.$.menu.items.findIndex( item => (item.value || item) == selectedItemLabel );
+            index > -1 && this.$.menu.select(index);
           }
         },
 
@@ -595,10 +595,15 @@ respectively.
          * get picked up. This fixed this edge case.
          */
         _doubleCheck: function() {
-          // console.log("_doubleCheck", this.selectedItem, this.selectedItemLabel);
-          var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
-          if (value != this.selectedItemLabel) {
-            this.selectedItemLabel = value;
+          if (this.selectedItem) {
+            var displayValue = this.selectedItem.textContent.trim();
+            var value = this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue;
+
+            // console.log("_doubleCheck", this.selectedItem, this.selectedItemLabel, value);
+            if (value != this.selectedItemLabel) {
+              this.selectedItemLabel = displayValue;
+              this.value = value;
+            }
           }
         }
       });
