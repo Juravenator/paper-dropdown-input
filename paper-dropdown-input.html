@@ -575,7 +575,7 @@ respectively.
         },
 
         _updateSelectedItem: function(itemsLength, selectedItemLabel) {
-          var displayValue = this.selectedItem && this.selectedItem.textContent.trim() || this.selectedItem.label;
+          var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
           if (!value && selectedItemLabel) {
             var index = this.$.menu.items.findIndex( item => (item.value || item) == selectedItemLabel );
