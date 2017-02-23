@@ -16,9 +16,8 @@
     "tests"
   ],
   "dependencies": {
-    "iron-component-page": "^1.1.7",
-    "web-component-tester": "^4.3.5",
-    "paper-dropdown-input": "^1.0.0",
+    "iron-component-page": "^1.1.8",
+    "paper-dropdown-input": "^2.0.0",
     "paper-menu": "^1.2.2"
   }
 }
