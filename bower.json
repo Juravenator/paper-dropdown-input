@@ -26,6 +26,9 @@
     "paper-listbox": "^1.1.2",
     "paper-material": "^1.0.6",
     "neon-animation": "^1.2.4",
-    "paper-input": "^1.1.19"
+    "paper-input": "^1.1.23",
+    "paper-dropdown-menu": "^1.5.0",
+    "iron-input": "^1.0.10",
+    "paper-icon-button": "^1.1.4"
   }
 }
