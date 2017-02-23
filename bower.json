@@ -8,7 +8,9 @@
   "license": "https://github.com/Juravenator/paper-dropdown-input/blob/master/LICENSE",
   "keywords": [
     "web-components",
-    "Polymer"
+    "Polymer",
+    "dropdown",
+    "search"
   ],
   "homepage": "https://github.com/Juravenator/paper-dropdown-input",
   "ignore": [
