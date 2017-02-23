@@ -204,8 +204,7 @@ respectively.
            */
           value: {
             type: String,
-            notify: true,
-            observer: "_valueChanged"
+            notify: true
           },
           /**
            * The label for the dropdown.
@@ -362,7 +361,8 @@ respectively.
         observers: [
           '_selectedItemChanged(selectedItem)',
           '_updateTemplate(_filtereditems)',
-          '_updateSelectedItem(items.length, selectedItemLabel)'
+          '_updateSelectedItem(items.length, selectedItemLabel)',
+          '_updateSelectedItemLabel(items, value)'
         ],
         attached: function() {
           // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
@@ -430,9 +430,11 @@ respectively.
             return;
           }
           var value = '';
+          var displayValue = '';
           if (!selectedItem) {
             value = '';
           } else {
+            displayValue = selectedItem.textContent.trim();
             value = selectedItem.label || selectedItem.getAttribute('label') || selectedItem.textContent.trim();
           }
           // console.log("_selectedItemChanged", value, this.selectedItemLabel);
@@ -442,7 +444,7 @@ respectively.
           // this._setValue(value);
           this.value = value;
           // this._setSelectedItemLabel(value);
-          this.selectedItemLabel = value;
+          this.selectedItemLabel = displayValue;
         },
         /**
          * Compute the vertical offset of the menu based on the value of
@@ -569,9 +571,14 @@ respectively.
           }
         },
 
-        _valueChanged: function(value) {
-          this.selectedItemLabel = value;
-          // console.log("_valueChanged", value);
+        _updateSelectedItemLabel: function(items, value) {
+          var selectedItem = items.find( item => item.value == value || item.label == value || item == value);
+          if (selectedItem) {
+            var displayValue = selectedItem.value || selectedItem.label || selectedItem;
+            this.selectedItemLabel = displayValue;
+          } else {
+            this.selectedItemLabel = value;
+          }
         },
 
         _disabledOrReadonly: function(disabled, readonly) {
