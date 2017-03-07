@@ -328,30 +328,55 @@ respectively.
             value: true
           },
 
+          /**
+           * The maximum amount of items the dropdown will render
+           * User will be asked to enter a more specific query if this
+           * threshold is exceeded
+           */
           maxSize: {
             type: Number,
             value: 50
           },
+          /**
+           * Set to true if the maxSize threshold is exceeded
+           */
           tooBig: {
             type: Boolean,
             notify: true,
             readOnly: true
           },
 
+          /**
+           * If set, the user can choose to use the entered search query
+           * as the value.
+           * This makes the element behave more like an autocompletion element.
+           */
           freedom: {
             type: Boolean,
             value: false
           },
 
-
+          /**
+           * The items that this element will filter on, and present to the
+           * user if it matches the user's search query
+           */
           items: {
             type: Array,
             value: function() {return []}
           },
+          /**
+           * The current search query entered by the user
+           */
           searchValue: {
             type: String,
+            notify: true,
             value: ""
           },
+          /**
+           * The filter function, executed each time 'items' or 'searchValue' changes
+           * The default function expects an array of strings or an array of
+           * objects containing the 'value' property
+           */
           filter: {
             type: Function,
             value: function() {
@@ -372,16 +397,28 @@ respectively.
               }
             }
           },
+          /**
+           * The remaining items after filtering.
+           * These are shown to the user in the dropdown.
+           * This list is truncated if 'maxSize' is exceeded
+           */
           _filtereditems: {
             type: Array,
             computed: "_filterItems(items, searchValue)"
           },
 
+          /**
+           * Makes the element read-only. The dropdown will not open.
+           */
           readonly: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
           },
+          /**
+           * passed to paper-listbox.
+           * https://www.webcomponents.org/element/PolymerElements/paper-listbox/paper-listbox#property-selectable
+           */
           selectable: {
             type: String
           }
@@ -605,6 +642,9 @@ respectively.
           event.stopPropagation();
         },
 
+        /**
+         * Clears 'searchValue' and focuses the search input
+         */
         clearSearch: function(event) {
           event && this._stopEvent(event);
           this.searchValue = "";
