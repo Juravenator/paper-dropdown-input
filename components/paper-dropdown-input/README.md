@@ -3,14 +3,25 @@ A paper-input that provides the user with input suggestions
 
 _[Demo and API Docs](https://juravenator.github.io/paper-dropdown-input/components/paper-dropdown-input/)_
 
-
-
 ## Examples
 
 ### Basic input
 
+<!---
+```
+<custom-element-demo>
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="paper-dropdown-input.html">
+    <link rel="import" href="../paper-item/paper-item.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
+```
+-->
 ```html
     <paper-dropdown-input label="Your favorite dinosaur" items='["Velociraptor","Deinonychus","Allosaurus","Brontosaurus","Carcharodontosaurus","Diplodocus","T-Rex"]'></paper-dropdown-input>
+    <p style="height: 450px"></p>
 ```
 ![Basic input demo](demo/screenie1.png)
 

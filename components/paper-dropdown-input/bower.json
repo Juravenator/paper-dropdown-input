@@ -5,7 +5,7 @@
   "authors": [
     "Glenn Dirkx <glenn.dirkx@gmail.com>"
   ],
-  "license": "https://github.com/Juravenator/paper-dropdown-input/blob/master/LICENSE",
+  "license": "MIT",
   "keywords": [
     "web-components",
     "Polymer",

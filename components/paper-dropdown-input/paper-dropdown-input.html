@@ -24,6 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-icons.html">
@@ -109,6 +110,11 @@ respectively.
       [search-bar] iron-icon {
         margin-left: 1em;
       }
+      [warning] {
+        background: #FFE0B2; /* paper-orange-100 */
+        margin: 0;
+        padding: .5em 1em;
+      }
     </style>
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
@@ -157,10 +163,19 @@ respectively.
           <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
         </div>
 
-        <content id="content"></content>
-        <template is="dom-if" if="[[!_filtereditems.length]]">
-          <p grey>No results were found</p>
+        <template is="dom-if" if="[[tooBig]]">
+          <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
         </template>
+        <template is="dom-if" if="[[!_filtereditems.length]]">
+          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]" restamp="true">
+            <p warning disabled>No results were found</p>
+          </template>
+          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]" restamp="true">
+            <p warning disabled>No results were found<br />would you like to use the search value?</p>
+            <paper-item>[[searchValue]]</paper-item>
+          </template>
+        </template>
+        <content id="content"></content>
       </paper-listbox>
     </paper-menu-button>
 
@@ -313,15 +328,55 @@ respectively.
             value: true
           },
 
+          /**
+           * The maximum amount of items the dropdown will render
+           * User will be asked to enter a more specific query if this
+           * threshold is exceeded
+           */
+          maxSize: {
+            type: Number,
+            value: 50
+          },
+          /**
+           * Set to true if the maxSize threshold is exceeded
+           */
+          tooBig: {
+            type: Boolean,
+            notify: true,
+            readOnly: true
+          },
 
+          /**
+           * If set, the user can choose to use the entered search query
+           * as the value.
+           * This makes the element behave more like an autocompletion element.
+           */
+          freedom: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * The items that this element will filter on, and present to the
+           * user if it matches the user's search query
+           */
           items: {
             type: Array,
             value: function() {return []}
           },
+          /**
+           * The current search query entered by the user
+           */
           searchValue: {
             type: String,
+            notify: true,
             value: ""
           },
+          /**
+           * The filter function, executed each time 'items' or 'searchValue' changes
+           * The default function expects an array of strings or an array of
+           * objects containing the 'value' property
+           */
           filter: {
             type: Function,
             value: function() {
@@ -330,7 +385,7 @@ respectively.
                   return items;
                 } else {
                   var _searchValue = searchValue.toLowerCase();
-                  return items.filter( item => {
+                  return items.filter( function(item) {
                     if (!item.value && typeof item != "string") {
                       console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property");
                       return true; // everything goes through
@@ -342,16 +397,28 @@ respectively.
               }
             }
           },
+          /**
+           * The remaining items after filtering.
+           * These are shown to the user in the dropdown.
+           * This list is truncated if 'maxSize' is exceeded
+           */
           _filtereditems: {
             type: Array,
             computed: "_filterItems(items, searchValue)"
           },
 
+          /**
+           * Makes the element read-only. The dropdown will not open.
+           */
           readonly: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
           },
+          /**
+           * passed to paper-listbox.
+           * https://www.webcomponents.org/element/PolymerElements/paper-listbox/paper-listbox#property-selectable
+           */
           selectable: {
             type: String
           }
@@ -560,13 +627,24 @@ respectively.
          */
         _filterItems: function(items, searchValue) {
           // console.log("_filterItems", items, searchValue);
-          return this.filter ? this.filter(items, searchValue) : items;
+          var result = this.filter ? this.filter(items, searchValue) : items;
+          if (this.maxSize > 0) {
+            this._setTooBig(result.length > this.maxSize);
+            return result.slice(0,this.maxSize);
+          }
+          else {
+            this._setTooBig(false);
+            return result;
+          }
         },
 
         _stopEvent: function(event) {
           event.stopPropagation();
         },
 
+        /**
+         * Clears 'searchValue' and focuses the search input
+         */
         clearSearch: function(event) {
           event && this._stopEvent(event);
           this.searchValue = "";
@@ -574,16 +652,20 @@ respectively.
         },
 
         _updateSelectedItem: function(itemsLength, selectedItemLabel) {
-          var displayValue = this.selectedItem && this.selectedItem.textContent.trim() || this.selectedItem.label;
+          var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
           if (!value && selectedItemLabel) {
-            var index = this.$.menu.items.findIndex( item => (item.value || item) == selectedItemLabel );
+            var index = this.$.menu.items.findIndex( function(item) {
+              return (item.value || item) == selectedItemLabel
+            } );
             index > -1 && this.$.menu.select(index);
           }
         },
 
         _updateSelectedItemLabel: function(items, value) {
-          var selectedItem = items.find( item => item.value == value || item.label == value || item == value);
+          var selectedItem = items.find( function(item) {
+            return item.value == value || item.label == value || item == value
+          });
           if (selectedItem) {
             var displayValue = selectedItem.value || selectedItem.label || selectedItem;
             this.selectedItemLabel = displayValue;
@@ -613,6 +695,10 @@ respectively.
               this.value = value;
             }
           }
+        },
+
+        _showFreeInput: function(freedom, searchValue) {
+          return freedom && searchValue != "";
         }
       });
     })();

@@ -5,7 +5,7 @@
   "authors": [
     "Glenn Dirkx <glenn.dirkx@gmail.com>"
   ],
-  "license": "https://github.com/Juravenator/paper-dropdown-input/blob/master/LICENSE",
+  "license": "MIT",
   "keywords": [
     "web-components",
     "Polymer",
@@ -31,14 +31,14 @@
     "iron-input": "^1.0.10",
     "paper-icon-button": "^1.1.4"
   },
-  "version": "2.0.0",
-  "_release": "2.0.0",
+  "version": "2.1.0",
+  "_release": "2.1.0",
   "_resolution": {
     "type": "version",
-    "tag": "2.0.0",
-    "commit": "9c30bf19b1bccf518c71dd37296f1fb78c51b88e"
+    "tag": "2.1.0",
+    "commit": "1bc64845beef84e81cc7c4838aa06f7f446db659"
   },
   "_source": "https://github.com/Juravenator/paper-dropdown-input.git",
-  "_target": "^2.0.0",
+  "_target": "^2.1.0",
   "_originalSource": "paper-dropdown-input"
 }
