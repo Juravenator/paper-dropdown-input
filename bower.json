@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "iron-component-page": "^1.1.8",
-    "paper-dropdown-input": "^2.0.0",
+    "paper-dropdown-input": "^2.1.0",
     "paper-menu": "^1.2.2"
   }
 }
