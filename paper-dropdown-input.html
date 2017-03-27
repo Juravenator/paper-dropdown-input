@@ -663,6 +663,9 @@ respectively.
         },
 
         _updateSelectedItemLabel: function(items, value) {
+          if (!value) {
+            return;
+          }
           var selectedItem = items.find( function(item) {
             return item.value == value || item.label == value || item == value
           });
