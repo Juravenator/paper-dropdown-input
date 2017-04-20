@@ -373,6 +373,14 @@ respectively.
             value: ""
           },
           /**
+           * The property name that items will have that paper-dropdown-input
+           * can filter on
+           */
+          filterProperty: {
+            type: String,
+            value: "value"
+          },
+          /**
            * The filter function, executed each time 'items' or 'searchValue' changes
            * The default function expects an array of strings or an array of
            * objects containing the 'value' property
@@ -380,17 +388,22 @@ respectively.
           filter: {
             type: Function,
             value: function() {
-              return function(items, searchValue) {
+              return function(items, searchValue, filterProperty) {
+                // older version of filter did not have filterProperty as an argument
+                // fallback for backwards compatibility
+                if (!filterProperty) {
+                  filterProperty = this.filterProperty;
+                }
                 if (!searchValue) {
                   return items;
                 } else {
                   var _searchValue = searchValue.toLowerCase();
                   return items.filter( function(item) {
-                    if (!item.value && typeof item != "string") {
-                      console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property");
+                    if (!item[filterProperty] && typeof item != "string") {
+                      console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `" + filterProperty + "` property");
                       return true; // everything goes through
                     } else {
-                      return (item.value || item).toLowerCase().indexOf(_searchValue) > -1;
+                      return (item[filterProperty] || item).toLowerCase().indexOf(_searchValue) > -1;
                     }
                   });
                 }
@@ -404,7 +417,7 @@ respectively.
            */
           _filtereditems: {
             type: Array,
-            computed: "_filterItems(items, searchValue)"
+            computed: "_filterItems(items, searchValue, filterProperty)"
           },
 
           /**
@@ -440,8 +453,8 @@ respectively.
         observers: [
           '_selectedItemChanged(selectedItem)',
           '_updateTemplate(_filtereditems)',
-          '_updateSelectedItem(items.length, selectedItemLabel)',
-          '_updateSelectedItemLabel(items, value)'
+          '_updateSelectedItem(items.length, selectedItemLabel, filterProperty)',
+          '_updateSelectedItemLabel(items, value, filterProperty)'
         ],
         attached: function() {
           // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
@@ -625,9 +638,9 @@ respectively.
          * @param {String} searchValue value to filter with
          * @return {Array.<Object>} the filtered array
          */
-        _filterItems: function(items, searchValue) {
+        _filterItems: function(items, searchValue, filterProperty) {
           // console.log("_filterItems", items, searchValue);
-          var result = this.filter ? this.filter(items, searchValue) : items;
+          var result = this.filter ? this.filter(items, searchValue, filterProperty) : items;
           if (this.maxSize > 0) {
             this._setTooBig(result.length > this.maxSize);
             return result.slice(0,this.maxSize);
@@ -651,26 +664,26 @@ respectively.
           this._focusSearch();
         },
 
-        _updateSelectedItem: function(itemsLength, selectedItemLabel) {
+        _updateSelectedItem: function(itemsLength, selectedItemLabel, filterProperty) {
           var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
           if (!value && selectedItemLabel) {
             var index = this.$.menu.items.findIndex( function(item) {
-              return (item.value || item) == selectedItemLabel
+              return (item[filterProperty] || item) == selectedItemLabel
             } );
             index > -1 && this.$.menu.select(index);
           }
         },
 
-        _updateSelectedItemLabel: function(items, value) {
+        _updateSelectedItemLabel: function(items, value, filterProperty) {
           if (!value) {
             return;
           }
           var selectedItem = items.find( function(item) {
-            return item.value == value || item.label == value || item == value
+            return item[filterProperty] == value || item.label == value || item == value
           });
           if (selectedItem) {
-            var displayValue = selectedItem.value || selectedItem.label || selectedItem;
+            var displayValue = selectedItem[filterProperty] || selectedItem.label || selectedItem;
             this.selectedItemLabel = displayValue;
           } else {
             this.selectedItemLabel = value;
