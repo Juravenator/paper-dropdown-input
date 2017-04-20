@@ -686,7 +686,12 @@ respectively.
         },
 
         _updateSelectedItemLabel: function(items, value, filterProperty) {
-          if (!value) {
+          if (value === undefined) {
+            return;
+          }
+          if (value === null) {
+            this.selectedItemLabel = null;
+            this._setSelectedItem(null);
             return;
           }
           var selectedItem = items.find( function(item) {
