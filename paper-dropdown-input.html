@@ -328,7 +328,7 @@ respectively.
           },
 
           /**
-           * The maximum amount of items the dropdown will render  
+           * The maximum amount of items the dropdown will render
            * User will be asked to enter a more specific query if this
            * threshold is exceeded
            */
@@ -674,9 +674,12 @@ respectively.
         _updateSelectedItem: function(itemsLength, selectedItemLabel, filterProperty) {
           var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
-          if (!value && selectedItemLabel) {
+          if (selectedItemLabel && value != selectedItemLabel) {
             var index = this.$.menu.items.findIndex( function(item) {
-              return (item[filterProperty] || item) == selectedItemLabel
+              return item.label == selectedItemLabel ||
+                     item[filterProperty] == selectedItemLabel ||
+                     item.value == selectedItemLabel ||
+                     item == selectedItemLabel;
             } );
             index > -1 && this.$.menu.select(index);
           }
