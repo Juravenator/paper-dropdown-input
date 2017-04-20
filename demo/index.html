@@ -52,7 +52,7 @@
       It's possible to customise the dropdown menu to your taste. Provide a template tag containing your custom layout,
       it will receive a variable 'items', containing all items after filtering.
     </p>
-    <paper-dropdown-input fancy label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
+    <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
       <template>
         <p disabled>Carnivores</p>
         <template is="dom-repeat" items="[[_getCarnivores(items)]]" as="item">
@@ -67,7 +67,7 @@
     </paper-dropdown-input>
 
     <h3>Fancy input</h3>
-    <paper-dropdown-input fancy label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
+    <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
       <template>
         <template is="dom-repeat" items="[[items]]" as="item">
           <dinosaur-card data="[[item]]"></dinosaur-card>
