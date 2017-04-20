@@ -689,9 +689,10 @@ respectively.
           if (value === undefined) {
             return;
           }
-          if (value === null) {
+          if (value === null || value == "") {
             this.selectedItemLabel = null;
             this._setSelectedItem(null);
+            this.$.menu.selected = null;
             return;
           }
           var selectedItem = items.find( function(item) {
