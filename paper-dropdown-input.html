@@ -153,7 +153,6 @@ respectively.
       </div>
       <paper-listbox class="dropdown-content"
                      id="menu"
-                     on-tap="_doubleCheck"
                      selectable="[[selectable]]"
                      stop-keyboard-event-propagation>
 
@@ -491,7 +490,15 @@ respectively.
          * @param {CustomEvent} event An `iron-select` event.
          */
         _onIronSelect: function(event) {
+          /*
+           * selectedItem can get screwed up.
+           * say you selected the first item in the list, and you start searching.
+           * You click the first item in the filtered list, the change will not
+           * get picked up. This fixed this edge case.
+           */
+          var dirtyhack = event.detail.item === this.selectedItem;
           this._setSelectedItem(event.detail.item);
+          dirtyhack && this._selectedItemChanged(this.selectedItem);
         },
         /**
          * A handler that is called when `iron-deselect` is fired.
@@ -692,25 +699,6 @@ respectively.
 
         _disabledOrReadonly: function(disabled, readonly) {
           return disabled || readonly;
-        },
-
-        /*
-         * selectedItem can get screwed up.
-         * say you selected the first item in the list, and you start searching.
-         * You click the first item in the filtered list, the change will not
-         * get picked up. This fixed this edge case.
-         */
-        _doubleCheck: function() {
-          if (this.selectedItem) {
-            var displayValue = this.selectedItem.textContent.trim() || this.selectedItem.label;
-            var value = this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue;
-
-            // console.log("_doubleCheck", this.selectedItem, this.selectedItemLabel, value);
-            if (value != this.selectedItemLabel) {
-              this.selectedItemLabel = displayValue;
-              this.value = value;
-            }
-          }
         },
 
         _showFreeInput: function(freedom, searchValue) {
