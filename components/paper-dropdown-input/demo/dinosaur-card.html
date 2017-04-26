@@ -39,8 +39,16 @@
           computed: "_getLabel(data)"
         }
       },
+      listeners: {
+        "tap": "dinotap"
+      },
+      dinotap: function(event) {
+        event.stopPropagation();
+        console.log("dinotap", this);
+        this.fire('iron-select', {item: this});
+      },
       _getLabel: function(data) {
-        return data.value;
+        return data.dinoName;
       }
     });
   </script>

@@ -153,7 +153,6 @@ respectively.
       </div>
       <paper-listbox class="dropdown-content"
                      id="menu"
-                     on-tap="_doubleCheck"
                      selectable="[[selectable]]"
                      stop-keyboard-event-propagation>
 
@@ -373,6 +372,14 @@ respectively.
             value: ""
           },
           /**
+           * The property name that items will have that paper-dropdown-input
+           * can filter on
+           */
+          filterProperty: {
+            type: String,
+            value: "value"
+          },
+          /**
            * The filter function, executed each time 'items' or 'searchValue' changes
            * The default function expects an array of strings or an array of
            * objects containing the 'value' property
@@ -380,17 +387,22 @@ respectively.
           filter: {
             type: Function,
             value: function() {
-              return function(items, searchValue) {
+              return function(items, searchValue, filterProperty) {
+                // older version of filter did not have filterProperty as an argument
+                // fallback for backwards compatibility
+                if (!filterProperty) {
+                  filterProperty = this.filterProperty;
+                }
                 if (!searchValue) {
                   return items;
                 } else {
                   var _searchValue = searchValue.toLowerCase();
                   return items.filter( function(item) {
-                    if (!item.value && typeof item != "string") {
-                      console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `value` property");
+                    if (!item[filterProperty] && typeof item != "string") {
+                      console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `" + filterProperty + "` property");
                       return true; // everything goes through
                     } else {
-                      return (item.value || item).toLowerCase().indexOf(_searchValue) > -1;
+                      return (item[filterProperty] || item).toLowerCase().indexOf(_searchValue) > -1;
                     }
                   });
                 }
@@ -404,7 +416,7 @@ respectively.
            */
           _filtereditems: {
             type: Array,
-            computed: "_filterItems(items, searchValue)"
+            computed: "_filterItems(items, searchValue, filterProperty)"
           },
 
           /**
@@ -440,8 +452,8 @@ respectively.
         observers: [
           '_selectedItemChanged(selectedItem)',
           '_updateTemplate(_filtereditems)',
-          '_updateSelectedItem(items.length, selectedItemLabel)',
-          '_updateSelectedItemLabel(items, value)'
+          '_updateSelectedItem(items.length, selectedItemLabel, filterProperty)',
+          '_updateSelectedItemLabel(items, value, filterProperty)'
         ],
         attached: function() {
           // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
@@ -478,7 +490,15 @@ respectively.
          * @param {CustomEvent} event An `iron-select` event.
          */
         _onIronSelect: function(event) {
+          /*
+           * selectedItem can get screwed up.
+           * say you selected the first item in the list, and you start searching.
+           * You click the first item in the filtered list, the change will not
+           * get picked up. This fixed this edge case.
+           */
+          var dirtyhack = event.detail.item === this.selectedItem;
           this._setSelectedItem(event.detail.item);
+          dirtyhack && this._selectedItemChanged(this.selectedItem);
         },
         /**
          * A handler that is called when `iron-deselect` is fired.
@@ -625,9 +645,9 @@ respectively.
          * @param {String} searchValue value to filter with
          * @return {Array.<Object>} the filtered array
          */
-        _filterItems: function(items, searchValue) {
+        _filterItems: function(items, searchValue, filterProperty) {
           // console.log("_filterItems", items, searchValue);
-          var result = this.filter ? this.filter(items, searchValue) : items;
+          var result = this.filter ? this.filter(items, searchValue, filterProperty) : items;
           if (this.maxSize > 0) {
             this._setTooBig(result.length > this.maxSize);
             return result.slice(0,this.maxSize);
@@ -651,50 +671,50 @@ respectively.
           this._focusSearch();
         },
 
-        _updateSelectedItem: function(itemsLength, selectedItemLabel) {
+        _updateSelectedItem: function(itemsLength, selectedItemLabel, filterProperty) {
           var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
-          if (!value && selectedItemLabel) {
+          if (selectedItemLabel && value != selectedItemLabel) {
             var index = this.$.menu.items.findIndex( function(item) {
-              return (item.value || item) == selectedItemLabel
+              return item.label == selectedItemLabel ||
+                     item[filterProperty] == selectedItemLabel ||
+                     item.value == selectedItemLabel ||
+                     item == selectedItemLabel;
             } );
             index > -1 && this.$.menu.select(index);
           }
         },
 
-        _updateSelectedItemLabel: function(items, value) {
+        _updateSelectedItemLabel: function(items, value, filterProperty) {
+          if (value === undefined) {
+            return;
+          }
+          if (value === null || value == "") {
+            this.selectedItemLabel = null;
+            this._setSelectedItem(null);
+            this.$.menu.selected = null;
+            return;
+          }
           var selectedItem = items.find( function(item) {
-            return item.value == value || item.label == value || item == value
+            return item[filterProperty] == value || item.label == value || item == value
           });
           if (selectedItem) {
-            var displayValue = selectedItem.value || selectedItem.label || selectedItem;
+            var displayValue = selectedItem[filterProperty] || selectedItem.label || selectedItem;
             this.selectedItemLabel = displayValue;
-          } else {
-            this.selectedItemLabel = value;
+          }
+          else {
+            this.$.menu.selected = null;
+            if (this.freedom) {
+              this.selectedItemLabel = value;
+            }
+            else {
+              this.selectedItemLabel = null;
+            }
           }
         },
 
         _disabledOrReadonly: function(disabled, readonly) {
           return disabled || readonly;
-        },
-
-        /*
-         * selectedItem can get screwed up.
-         * say you selected the first item in the list, and you start searching.
-         * You click the first item in the filtered list, the change will not
-         * get picked up. This fixed this edge case.
-         */
-        _doubleCheck: function() {
-          if (this.selectedItem) {
-            var displayValue = this.selectedItem.textContent.trim() || this.selectedItem.label;
-            var value = this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue;
-
-            // console.log("_doubleCheck", this.selectedItem, this.selectedItemLabel, value);
-            if (value != this.selectedItemLabel) {
-              this.selectedItemLabel = displayValue;
-              this.value = value;
-            }
-          }
         },
 
         _showFreeInput: function(freedom, searchValue) {
