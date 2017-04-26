@@ -701,8 +701,15 @@ respectively.
           if (selectedItem) {
             var displayValue = selectedItem[filterProperty] || selectedItem.label || selectedItem;
             this.selectedItemLabel = displayValue;
-          } else {
-            this.selectedItemLabel = value;
+          }
+          else {
+            this.$.menu.selected = null;
+            if (this.freedom) {
+              this.selectedItemLabel = value;
+            }
+            else {
+              this.selectedItemLabel = null;
+            }
           }
         },
 
