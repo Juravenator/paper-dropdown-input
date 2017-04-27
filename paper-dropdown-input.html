@@ -73,6 +73,9 @@ respectively.
     <style include="paper-dropdown-menu-shared-styles"></style>
 
     <style>
+      :host([no-search]) [search-bar] {
+        display: none;
+      }
       :host ::content hr {
         border-top: 1px solid var(--disabled-text-color);
         border-bottom: none;
@@ -434,6 +437,15 @@ respectively.
            */
           selectable: {
             type: String
+          },
+
+          /**
+           * disables search, making it more like a regular dropdown.
+           */
+          noSearch: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         },
         listeners: {
