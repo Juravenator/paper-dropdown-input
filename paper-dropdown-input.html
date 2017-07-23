@@ -106,6 +106,9 @@ respectively.
           padding: 0;
         };
       }
+      paper-menu-button {
+        --paper-input-container-input-color: var(--primary-text-color);
+      }
       .dropdown-content > p {
         padding-left: 1em;
       }
@@ -113,6 +116,11 @@ respectively.
         display: flex;
         flex-direction: row;
         align-items: center;
+      }
+      [search-bar] iron-input {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
       }
       [search-bar] input {
         border: none;
@@ -176,7 +184,9 @@ respectively.
 
         <div search-bar on-tap="_stopEvent" disabled>
           <iron-icon icon="search"></iron-icon>
-          <input id="searchInput" is="iron-input" bind-value="{{searchValue}}">
+          <iron-input bind-value="{{searchValue}}">
+            <input id="searchInput" value="{{value::input}}" is="iron-input" bind-value="{{searchValue}}">
+          </iron-input>
           <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
         </div>
 
