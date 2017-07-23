@@ -588,11 +588,9 @@ respectively.
             displayValue = selectedItem.textContent.trim() || selectedItem.label;
             value = selectedItem.label || selectedItem.getAttribute('label') || selectedItem.textContent.trim();
           }
-          // console.log("_selectedItemChanged", value, this.selectedItemLabel);
           if (!value && this.selectedItemLabel) { // selected item re-appeared in _filteredItems
             return;
           }
-          // this._setValue(value);
           this._setValue(value);
           // this._setSelectedItemLabel(value);
           this._setSelectedItemLabel(displayValue);
@@ -650,12 +648,10 @@ respectively.
           // when the user clears the search field, the selectedItem is null
           // this causes an iron-select event causing the dropdown to close
           this.$.menuButton._onIronSelect = function(event) {
-            // console.log("_onIronSelect");
             var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
             if (!value && this.selectedItemLabel) {
               return;
             }
-            // console.log("_onIronSelect2", value, this.selectedItemLabel);
             if (!this.ignoreSelect) {
               this.$.menuButton.close();
             }
@@ -681,7 +677,6 @@ respectively.
          * @param {Array.<Object>} filtereditems the new list to display in the dropdown
          */
         _updateTemplate: function(filtereditems) {
-          // console.log("_updateTemplate", filtereditems);
           if (this._templateInstance) {
             this._templateInstance.items = filtereditems;
           }
@@ -701,7 +696,6 @@ respectively.
          * @return {Array.<Object>} the filtered array
          */
         _filterItems: function(items, searchValue, filterProperty) {
-          // console.log("_filterItems", items, searchValue);
           var result = this.filter ? this.filter(items, searchValue, filterProperty) : items;
           if (this.maxSize > 0) {
             this._setTooBig(result.length > this.maxSize);
