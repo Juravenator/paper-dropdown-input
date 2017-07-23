@@ -347,8 +347,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @param {CustomEvent} event A key combination event.
      */
     _onEscKey: function(event) {
-      // esc blurs the control
-      this.focusedItem.blur();
+      var focusedItem = this.focusedItem;
+      if (focusedItem) {
+        focusedItem.blur();
+      }
     },
 
     /**

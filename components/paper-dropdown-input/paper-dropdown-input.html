@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../iron-behaviors/iron-button-state.html">
 <link rel="import" href="../iron-behaviors/iron-control-state.html">
@@ -20,6 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../neon-animation/web-animations.html">
 
 <link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
@@ -43,9 +46,16 @@ Custom content example:
 
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
+        <~~ polymer 1.x ~~>
         <template is="dom-repeat" items="[[items]]" as="item">
           <dinosaur-card data="[[item]]"></dinosaur-card>
         </template>
+        <~~ polymer 2.x ~~>
+        <dom-repeat items="[[items]]" as="dino">
+          <template>
+            <dinosaur-card data="[[dino]]"></dinosaur-card>
+          </template>
+        </dom-repeat>
       </template>
     </paper-dropdown-input>
 
@@ -60,9 +70,11 @@ Custom property | Description | Default
 `--paper-dropdown-menu-button` | A mixin that is applied to the internal menu button | `{}`
 `--paper-dropdown-menu-input` | A mixin that is applied to the internal paper input | `{}`
 `--paper-dropdown-menu-icon` | A mixin that is applied to the internal icon | `{}`
+
 You can also use any of the `paper-input-container` and `paper-menu-button`
 style mixins and custom properties to style the internal input and menu button
 respectively.
+
 @group Paper Elements
 @element paper-dropdown-input
 @demo demo/index.html
@@ -73,6 +85,9 @@ respectively.
     <style include="paper-dropdown-menu-shared-styles"></style>
 
     <style>
+      :host([no-search]) [search-bar] {
+        display: none;
+      }
       :host ::content hr {
         border-top: 1px solid var(--disabled-text-color);
         border-bottom: none;
@@ -91,6 +106,9 @@ respectively.
           padding: 0;
         };
       }
+      paper-menu-button {
+        --paper-input-container-input-color: var(--primary-text-color);
+      }
       .dropdown-content > p {
         padding-left: 1em;
       }
@@ -98,6 +116,11 @@ respectively.
         display: flex;
         flex-direction: row;
         align-items: center;
+      }
+      [search-bar] iron-input {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
       }
       [search-bar] input {
         border: none;
@@ -134,7 +157,8 @@ respectively.
       no-overlap
       allow-outside-scroll="[[allowOutsideScroll]]"
       restore-focus-on-close="[[restoreFocusOnClose]]">
-      <div class="dropdown-trigger">
+      <!-- support hybrid mode: user might be using paper-menu-button 1.x which distributes via <content> -->
+      <div class="dropdown-trigger" slot="dropdown-trigger">
         <paper-ripple></paper-ripple>
         <!-- paper-input has type="text" for a11y, do not remove -->
         <paper-input
@@ -142,23 +166,28 @@ respectively.
           invalid="[[invalid]]"
           readonly
           disabled="[[disabled]]"
+          name="[[name]]"
           value="[[selectedItemLabel]]"
           placeholder="[[placeholder]]"
           error-message="[[errorMessage]]"
           always-float-label="[[alwaysFloatLabel]]"
           no-label-float="[[noLabelFloat]]"
           label="[[label]]">
-          <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix></iron-icon>
+          <!-- support hybrid mode: user might be using paper-input 1.x which distributes via <content> -->
+          <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix slot="suffix"></iron-icon>
         </paper-input>
       </div>
-      <paper-listbox class="dropdown-content"
+      <paper-listbox class="dropdown-content" slot="dropdown-content"
                      id="menu"
                      selectable="[[selectable]]"
+                     on-tap="_checkSelectChange"
                      stop-keyboard-event-propagation>
 
         <div search-bar on-tap="_stopEvent" disabled>
           <iron-icon icon="search"></iron-icon>
-          <input id="searchInput" is="iron-input" bind-value="{{searchValue}}">
+          <iron-input bind-value="{{searchValue}}">
+            <input id="searchInput" value="{{value::input}}" is="iron-input" bind-value="{{searchValue}}">
+          </iron-input>
           <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
         </div>
 
@@ -166,22 +195,23 @@ respectively.
           <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
         </template>
         <template is="dom-if" if="[[!_filtereditems.length]]">
-          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]" restamp="true">
+          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]">
             <p warning disabled>No results were found</p>
           </template>
-          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]" restamp="true">
+          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]">
             <p warning disabled>No results were found<br />would you like to use the search value?</p>
             <paper-item>[[searchValue]]</paper-item>
           </template>
         </template>
-        <content id="content"></content>
+        <slot id="content"></slot>
       </paper-listbox>
     </paper-menu-button>
 
 
 
+
     <template id="menuTemplate">
-      <template default is="dom-repeat" items="[[items]]" as="item">
+      <template is="dom-repeat" items="[[items]]" as="item">
         <paper-item>[[item]]</paper-item>
       </template>
 		</template>
@@ -191,8 +221,10 @@ respectively.
   <script>
     (function() {
       'use strict';
+
       Polymer({
         is: 'paper-dropdown-input',
+
         behaviors: [
           Polymer.IronButtonState,
           Polymer.IronControlState,
@@ -200,6 +232,7 @@ respectively.
           Polymer.Templatizer,
           Polymer.IronValidatableBehavior
         ],
+
         properties: {
           /**
            * The derived "label" of the currently selected item. This value
@@ -208,11 +241,13 @@ respectively.
            */
           selectedItemLabel: {
             type: String,
-            notify: true
+            notify: true,
+            readOnly: true
           },
+
           /**
            * The last selected item. An item is selected if the dropdown menu has
-           * a child with class `dropdown-content`, and that child triggers an
+           * a child with slot `dropdown-content`, and that child triggers an
            * `iron-select` event with the selected `item` in the `detail`.
            *
            * @type {?Object}
@@ -222,33 +257,39 @@ respectively.
             notify: true,
             readOnly: true
           },
+
           /**
            * The value for this element that will be used when submitting in
-           * a form. It will have the value of the label of the selected item
-           * if present, otherwise it will be identical to `selectedItemLabel`
+           * a form. It is read only, and will always have the same value
+           * as `selectedItemLabel`.
            */
           value: {
             type: String,
-            notify: true
+            notify: true,
+            readOnly: true
           },
+
           /**
            * The label for the dropdown.
            */
           label: {
             type: String
           },
+
           /**
            * The placeholder for the dropdown.
            */
           placeholder: {
             type: String
           },
+
           /**
            * The error message to display when invalid.
            */
           errorMessage: {
               type: String
           },
+
           /**
            * True if the dropdown is open. Otherwise, false.
            */
@@ -258,6 +299,7 @@ respectively.
             value: false,
             observer: '_openedChanged'
           },
+
           /**
            * By default, the dropdown will constrain scrolling on the page
            * to itself when opened.
@@ -268,6 +310,7 @@ respectively.
             type: Boolean,
             value: false
           },
+
           /**
            * Set to true to disable the floating label. Bind this to the
            * `<paper-input-container>`'s `noLabelFloat` property.
@@ -277,6 +320,7 @@ respectively.
               value: false,
               reflectToAttribute: true
           },
+
           /**
            * Set to true to always float the label. Bind this to the
            * `<paper-input-container>`'s `alwaysFloatLabel` property.
@@ -285,6 +329,7 @@ respectively.
             type: Boolean,
             value: false
           },
+
           /**
            * Set to true to disable animations when opening and closing the
            * dropdown.
@@ -293,6 +338,7 @@ respectively.
             type: Boolean,
             value: false
           },
+
           /**
            * The orientation against which to align the menu dropdown
            * horizontally relative to the dropdown trigger.
@@ -301,6 +347,7 @@ respectively.
             type: String,
             value: 'left'
           },
+
           /**
            * The orientation against which to align the menu dropdown
            * vertically relative to the dropdown trigger.
@@ -309,6 +356,7 @@ respectively.
             type: String,
             value: 'top'
           },
+
           /**
            * If true, the `horizontalAlign` and `verticalAlign` properties will
            * be considered preferences instead of strict requirements when
@@ -363,6 +411,7 @@ respectively.
             type: Array,
             value: function() {return []}
           },
+
           /**
            * The current search query entered by the user
            */
@@ -371,6 +420,7 @@ respectively.
             notify: true,
             value: ""
           },
+
           /**
            * The property name that items will have that paper-dropdown-input
            * can filter on
@@ -379,6 +429,7 @@ respectively.
             type: String,
             value: "value"
           },
+
           /**
            * The filter function, executed each time 'items' or 'searchValue' changes
            * The default function expects an array of strings or an array of
@@ -409,6 +460,7 @@ respectively.
               }
             }
           },
+
           /**
            * The remaining items after filtering.
            * These are shown to the user in the dropdown.
@@ -427,34 +479,49 @@ respectively.
             value: false,
             reflectToAttribute: true
           },
+
           /**
            * passed to paper-listbox.
            * https://www.webcomponents.org/element/PolymerElements/paper-listbox/paper-listbox#property-selectable
            */
           selectable: {
             type: String
+          },
+
+          /**
+           * disables search, making it more like a regular dropdown.
+           */
+          noSearch: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         },
+
         listeners: {
           'tap': '_onTap',
           'dom-change': '_refit'
           // 'neon-animation-finish': '_focusSearch'
         },
+
         keyBindings: {
           'up down': 'open',
           'esc': 'close'
         },
+
         hostAttributes: {
           role: 'combobox',
           'aria-autocomplete': 'none',
           'aria-haspopup': 'true'
         },
+
         observers: [
           '_selectedItemChanged(selectedItem)',
           '_updateTemplate(_filtereditems)',
           '_updateSelectedItem(items.length, selectedItemLabel, filterProperty)',
           '_updateSelectedItemLabel(items, value, filterProperty)'
         ],
+
         attached: function() {
           // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
           // child will cause an `iron-select` event to fire while the element is
@@ -464,42 +531,42 @@ respectively.
           if (contentElement && contentElement.selectedItem) {
             this._setSelectedItem(contentElement.selectedItem);
           }
-          this._setupTemplate();
+          if (!this._isSetupTemplate){
+            this._isSetupTemplate = true;
+            this._setupTemplate();
+          }
         },
+
         /**
          * The content element that is contained by the dropdown menu, if any.
          */
         get contentElement() {
           return this.$.menu;
         },
+
         /**
          * Show the dropdown content.
          */
         open: function() {
           this.$.menuButton.open();
         },
+
         /**
          * Hide the dropdown content.
          */
         close: function() {
           this.$.menuButton.close();
         },
+
         /**
          * A handler that is called when `iron-select` is fired.
          *
          * @param {CustomEvent} event An `iron-select` event.
          */
         _onIronSelect: function(event) {
-          /*
-           * selectedItem can get screwed up.
-           * say you selected the first item in the list, and you start searching.
-           * You click the first item in the filtered list, the change will not
-           * get picked up. This fixed this edge case.
-           */
-          var dirtyhack = event.detail.item === this.selectedItem;
           this._setSelectedItem(event.detail.item);
-          dirtyhack && this._selectedItemChanged(this.selectedItem);
         },
+
         /**
          * A handler that is called when `iron-deselect` is fired.
          *
@@ -508,6 +575,7 @@ respectively.
         _onIronDeselect: function(event) {
           this._setSelectedItem(null);
         },
+
         /**
          * A handler that is called when the dropdown is tapped.
          *
@@ -518,6 +586,7 @@ respectively.
             this.open();
           }
         },
+
         /**
          * Compute the label for the dropdown given a selected item.
          *
@@ -536,15 +605,14 @@ respectively.
             displayValue = selectedItem.textContent.trim() || selectedItem.label;
             value = selectedItem.label || selectedItem.getAttribute('label') || selectedItem.textContent.trim();
           }
-          // console.log("_selectedItemChanged", value, this.selectedItemLabel);
           if (!value && this.selectedItemLabel) { // selected item re-appeared in _filteredItems
             return;
           }
-          // this._setValue(value);
-          this.value = value;
+          this._setValue(value);
           // this._setSelectedItemLabel(value);
-          this.selectedItemLabel = displayValue;
+          this._setSelectedItemLabel(displayValue);
         },
+
         /**
          * Compute the vertical offset of the menu based on the value of
          * `noLabelFloat`.
@@ -559,6 +627,7 @@ respectively.
           // input has a floating label.
           return noLabelFloat ? -4 : 8;
         },
+
         /**
          * Returns false if the element is required and does not have a selection,
          * and true otherwise.
@@ -569,6 +638,7 @@ respectively.
         _getValidity: function(_value) {
           return this.disabled || !this.required || (this.required && !!this.value);
         },
+
         _openedChanged: function() {
           var openState = this.opened ? 'true' : 'false';
           var e = this.contentElement;
@@ -595,12 +665,10 @@ respectively.
           // when the user clears the search field, the selectedItem is null
           // this causes an iron-select event causing the dropdown to close
           this.$.menuButton._onIronSelect = function(event) {
-            // console.log("_onIronSelect");
             var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
             if (!value && this.selectedItemLabel) {
               return;
             }
-            // console.log("_onIronSelect2", value, this.selectedItemLabel);
             if (!this.ignoreSelect) {
               this.$.menuButton.close();
             }
@@ -626,7 +694,6 @@ respectively.
          * @param {Array.<Object>} filtereditems the new list to display in the dropdown
          */
         _updateTemplate: function(filtereditems) {
-          // console.log("_updateTemplate", filtereditems);
           if (this._templateInstance) {
             this._templateInstance.items = filtereditems;
           }
@@ -646,7 +713,6 @@ respectively.
          * @return {Array.<Object>} the filtered array
          */
         _filterItems: function(items, searchValue, filterProperty) {
-          // console.log("_filterItems", items, searchValue);
           var result = this.filter ? this.filter(items, searchValue, filterProperty) : items;
           if (this.maxSize > 0) {
             this._setTooBig(result.length > this.maxSize);
@@ -690,7 +756,7 @@ respectively.
             return;
           }
           if (value === null || value == "") {
-            this.selectedItemLabel = null;
+            this._setSelectedItemLabel(null);
             this._setSelectedItem(null);
             this.$.menu.selected = null;
             return;
@@ -700,17 +766,38 @@ respectively.
           });
           if (selectedItem) {
             var displayValue = selectedItem[filterProperty] || selectedItem.label || selectedItem;
-            this.selectedItemLabel = displayValue;
+            this._setSelectedItemLabel(displayValue);
           }
           else {
             this.$.menu.selected = null;
             if (this.freedom) {
-              this.selectedItemLabel = value;
+              this._setSelectedItemLabel(value);
             }
             else {
-              this.selectedItemLabel = null;
+              this._setSelectedItemLabel(null);
             }
           }
+        },
+
+        /*
+         * selectedItem can get screwed up.
+         * say you selected the first item in the list, and you start searching.
+         * You click the first item in the filtered list, the change will not
+         * get picked up. This fixed this edge case.
+         */
+        _checkSelectChange: function(event) {
+          // execute ~after~ the normal update flow
+          // otherwise we would always detect the edge case
+          setTimeout(function () {
+            if (!this.selectedItemLabel) { return }
+            var selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+            var selectedItemLabel = selectedItem.textContent.trim() || selectedItem.label;
+
+            if (selectedItemLabel !== this.selectedItemLabel) {
+              this.opened = false;
+              this._selectedItemChanged(this.selectedItem);
+            }
+          }.bind(this), 0);
         },
 
         _disabledOrReadonly: function(disabled, readonly) {
