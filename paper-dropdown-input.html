@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../iron-behaviors/iron-button-state.html">
 <link rel="import" href="../iron-behaviors/iron-control-state.html">
@@ -43,9 +45,16 @@ Custom content example:
 
     <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]'>
       <template>
+        <~~ polymer 1.x ~~>
         <template is="dom-repeat" items="[[items]]" as="item">
           <dinosaur-card data="[[item]]"></dinosaur-card>
         </template>
+        <~~ polymer 2.x ~~>
+        <dom-repeat items="[[items]]" as="dino">
+          <template>
+            <dinosaur-card data="[[dino]]"></dinosaur-card>
+          </template>
+        </dom-repeat>
       </template>
     </paper-dropdown-input>
 
@@ -170,18 +179,26 @@ respectively.
           <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
         </div>
 
-        <template is="dom-if" if="[[tooBig]]">
-          <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
-        </template>
-        <template is="dom-if" if="[[!_filtereditems.length]]">
-          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]" restamp="true">
-            <p warning disabled>No results were found</p>
+        <dom-if if="[[tooBig]]">
+          <template is="dom-if">
+            <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
           </template>
-          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]" restamp="true">
-            <p warning disabled>No results were found<br />would you like to use the search value?</p>
-            <paper-item>[[searchValue]]</paper-item>
+        </dom-if>
+        <dom-if if="[[!_filtereditems.length]]">
+          <template is="dom-if">
+            <dom-if if="[[!_showFreeInput(freedom, searchValue)]]">
+              <template is="dom-if">
+                <p warning disabled>No results were found</p>
+              </template>
+            </dom-if>
+            <dom-if if="[[_showFreeInput(freedom, searchValue)]]">
+              <template is="dom-if">
+                <p warning disabled>No results were found<br />would you like to use the search value?</p>
+                <paper-item>[[searchValue]]</paper-item>
+              </template>
+            </dom-if>
           </template>
-        </template>
+        </dom-if>
         <slot id="content" name="dropdown-content" slot="dropdown-content"></slot>
       </paper-listbox>
     </paper-menu-button>
@@ -189,9 +206,11 @@ respectively.
 
 
     <template id="menuTemplate">
-      <template default is="dom-repeat" items="[[items]]" as="item">
-        <paper-item>[[item]]</paper-item>
-      </template>
+      <dom-repeat items="[[items]]" as="item" default>
+        <template is="dom-repeat">
+          <paper-item>[[item]]</paper-item>
+        </template>
+      </dom-repeat>
 		</template>
 
   </template>
