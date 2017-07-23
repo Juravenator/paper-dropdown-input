@@ -22,6 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 <link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../neon-animation/web-animations.html">
 
 <link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
@@ -168,7 +169,7 @@ respectively.
           <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix slot="suffix"></iron-icon>
         </paper-input>
       </div>
-      <paper-listbox class="dropdown-content"
+      <paper-listbox class="dropdown-content" slot="dropdown-content"
                      id="menu"
                      selectable="[[selectable]]"
                      stop-keyboard-event-propagation>
@@ -199,9 +200,10 @@ respectively.
             </dom-if>
           </template>
         </dom-if>
-        <slot id="content" name="dropdown-content" slot="dropdown-content"></slot>
+        <slot id="content"></slot>
       </paper-listbox>
     </paper-menu-button>
+
 
 
 
