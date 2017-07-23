@@ -56,7 +56,7 @@
       </p>
       <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
         <template>
-          <p disabled slot="dropdown-items">Carnivores</p>
+          <p disabled>Carnivores</p>
           <template is="dom-repeat" items="[[_getCarnivores(items)]]" as="item">
             <paper-item label="[[item.dinoName]]">[[item.dinoName]]</paper-item>
           </template>
