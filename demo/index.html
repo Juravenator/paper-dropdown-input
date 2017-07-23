@@ -40,8 +40,8 @@
 </head>
 
 <body unresolved>
-  <dom-bind id="template">
-    <template>
+  <dom-bind>
+    <template is="dom-bind">
       <h3>Basic input</h3>
       <p>
         Paper-dropdown-input takes a parameter 'items', which must be an array of strings or an array of objects.
@@ -81,7 +81,7 @@
   </dom-bind>
 
   <script>
-    var template = document.getElementById('template');
+    var template = Polymer.version[0] === "1" ? document.querySelector("template[is='dom-bind']") : document.querySelector("dom-bind");
     template._getCarnivores = items => items.filter( item => item.type == "carnivore" );
     template._getHerbivores = items => items.filter( item => item.type == "herbivore" );
     // auto-binding template is ready.
