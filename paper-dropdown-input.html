@@ -191,26 +191,18 @@ respectively.
           <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
         </div>
 
-        <dom-if if="[[tooBig]]">
-          <template is="dom-if">
-            <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
+        <template is="dom-if" if="[[tooBig]]">
+          <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
+        </template>
+        <template is="dom-if" if="[[!_filtereditems.length]]">
+          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]">
+            <p warning disabled>No results were found</p>
           </template>
-        </dom-if>
-        <dom-if if="[[!_filtereditems.length]]">
-          <template is="dom-if">
-            <dom-if if="[[!_showFreeInput(freedom, searchValue)]]">
-              <template is="dom-if">
-                <p warning disabled>No results were found</p>
-              </template>
-            </dom-if>
-            <dom-if if="[[_showFreeInput(freedom, searchValue)]]">
-              <template is="dom-if">
-                <p warning disabled>No results were found<br />would you like to use the search value?</p>
-                <paper-item>[[searchValue]]</paper-item>
-              </template>
-            </dom-if>
+          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]">
+            <p warning disabled>No results were found<br />would you like to use the search value?</p>
+            <paper-item>[[searchValue]]</paper-item>
           </template>
-        </dom-if>
+        </template>
         <slot id="content"></slot>
       </paper-listbox>
     </paper-menu-button>
@@ -219,11 +211,9 @@ respectively.
 
 
     <template id="menuTemplate">
-      <dom-repeat items="[[items]]" as="item" default>
-        <template is="dom-repeat">
-          <paper-item>[[item]]</paper-item>
-        </template>
-      </dom-repeat>
+      <template is="dom-repeat" items="[[items]]" as="item">
+        <paper-item>[[item]]</paper-item>
+      </template>
 		</template>
 
   </template>
