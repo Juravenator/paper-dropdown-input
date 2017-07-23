@@ -180,6 +180,7 @@ respectively.
       <paper-listbox class="dropdown-content" slot="dropdown-content"
                      id="menu"
                      selectable="[[selectable]]"
+                     on-tap="_checkSelectChange"
                      stop-keyboard-event-propagation>
 
         <div search-bar on-tap="_stopEvent" disabled>
@@ -570,15 +571,7 @@ respectively.
          * @param {CustomEvent} event An `iron-select` event.
          */
         _onIronSelect: function(event) {
-          /*
-           * selectedItem can get screwed up.
-           * say you selected the first item in the list, and you start searching.
-           * You click the first item in the filtered list, the change will not
-           * get picked up. This fixed this edge case.
-           */
-          var dirtyhack = event.detail.item === this.selectedItem;
           this._setSelectedItem(event.detail.item);
-          dirtyhack && this._selectedItemChanged(this.selectedItem);
         },
 
         /**
@@ -791,6 +784,27 @@ respectively.
               this._setSelectedItemLabel(null);
             }
           }
+        },
+
+        /*
+         * selectedItem can get screwed up.
+         * say you selected the first item in the list, and you start searching.
+         * You click the first item in the filtered list, the change will not
+         * get picked up. This fixed this edge case.
+         */
+        _checkSelectChange: function(event) {
+          // execute ~after~ the normal update flow
+          // otherwise we would always detect the edge case
+          setTimeout(function () {
+            if (!this.selectedItemLabel) { return }
+            var selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+            var selectedItemLabel = selectedItem.textContent.trim() || selectedItem.label;
+
+            if (selectedItemLabel !== this.selectedItemLabel) {
+              this.opened = false;
+              this._selectedItemChanged(this.selectedItem);
+            }
+          }.bind(this), 0);
         },
 
         _disabledOrReadonly: function(disabled, readonly) {
