@@ -29,6 +29,7 @@
     "paper-input": "^2.0.1",
     "paper-dropdown-menu": "^2.0.0",
     "iron-input": "^2.0.0",
-    "paper-icon-button": "^2.0.0"
+    "paper-icon-button": "^2.0.0",
+    "web-animations-js": "web-animations/web-animations-js#^2.3.1"
   }
 }
