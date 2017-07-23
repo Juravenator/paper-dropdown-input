@@ -531,7 +531,10 @@ respectively.
           if (contentElement && contentElement.selectedItem) {
             this._setSelectedItem(contentElement.selectedItem);
           }
-          this._setupTemplate();
+          if (!this._isSetupTemplate){
+            this._isSetupTemplate = true;
+            this._setupTemplate();
+          }
         },
 
         /**
