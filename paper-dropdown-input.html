@@ -794,7 +794,7 @@ respectively.
             // 'Polymer.dom(event.detail.sourceEvent).localTarget' is erroring out with Firefox
             // when running in a full Polymer 2.x context
             var selectedItem;
-            if (event.composedPath()[0]) {
+            if (event.composedPath && event.composedPath()[0]) {
                selectedItem = event.composedPath()[0];
             }
             else {
