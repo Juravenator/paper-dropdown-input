@@ -790,7 +790,17 @@ respectively.
           // otherwise we would always detect the edge case
           setTimeout(function () {
             if (!this.selectedItemLabel) { return }
-            var selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+
+            // 'Polymer.dom(event.detail.sourceEvent).localTarget' is erroring out with Firefox
+            // when running in a full Polymer 2.x context
+            var selectedItem;
+            if (event.composedPath && event.composedPath()[0]) {
+               selectedItem = event.composedPath()[0];
+            }
+            else {
+               selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+            }
+
             var selectedItemLabel = selectedItem.textContent.trim() || selectedItem.label;
 
             if (selectedItemLabel !== this.selectedItemLabel) {
