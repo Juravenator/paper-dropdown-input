@@ -32,12 +32,12 @@
     "paper-icon-button": "^2.0.0",
     "web-animations-js": "web-animations/web-animations-js#^2.3.1"
   },
-  "version": "2.5.0",
-  "_release": "2.5.0",
+  "version": "2.5.1",
+  "_release": "2.5.1",
   "_resolution": {
     "type": "version",
-    "tag": "2.5.0",
-    "commit": "2be970a07dfa910b70c8ee2ce68f621edd5f245a"
+    "tag": "2.5.1",
+    "commit": "13ca9c0b65eede289630236096a7d58131b93b0f"
   },
   "_source": "https://github.com/Juravenator/paper-dropdown-input.git",
   "_target": "^2.5.0",
