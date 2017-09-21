@@ -21,15 +21,15 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#1.9 - 2",
-    "iron-icon": "^2.0.0",
-    "iron-icons": "^2.0.1",
-    "paper-item": "^2.0.0",
-    "paper-listbox": "^2.0.0",
-    "paper-input": "^2.0.1",
-    "paper-dropdown-menu": "^2.0.0",
-    "iron-input": "^2.0.0",
-    "paper-icon-button": "^2.0.0",
+    "polymer": "Polymer/polymer#1.9",
+    "iron-icon": "#1 - 2",
+    "iron-icons": "#1 - 2",
+    "paper-item": "#1 - 2",
+    "paper-listbox": "#1 - 2",
+    "paper-input": "#1 - 2",
+    "paper-dropdown-menu": "#1 - 2",
+    "iron-input": "#1 - 2",
+    "paper-icon-button": "#1 - 2",
     "web-animations-js": "web-animations/web-animations-js#^2.3.1"
   }
 }
