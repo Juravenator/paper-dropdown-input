@@ -21,7 +21,7 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#1.9",
+    "polymer": "Polymer/polymer#1.9 - 2",
     "iron-icon": "#1 - 2",
     "iron-icons": "#1 - 2",
     "paper-item": "#1 - 2",
