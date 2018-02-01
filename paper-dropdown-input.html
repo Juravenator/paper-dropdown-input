@@ -761,9 +761,10 @@ respectively.
             this.$.menu.selected = null;
             return;
           }
-          var selectedItem = items.find( function(item) {
+	
+          var selectedItem = items.filter( function(item) {
             return item[filterProperty] == value || item.label == value || item == value
-          });
+          })[0];
           if (selectedItem) {
             var displayValue = selectedItem[filterProperty] || selectedItem.label || selectedItem;
             this._setSelectedItemLabel(displayValue);
