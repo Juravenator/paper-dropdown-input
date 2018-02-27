@@ -88,40 +88,50 @@ respectively.
       :host([no-search]) [search-bar] {
         display: none;
       }
+
       :host ::content hr {
         border-top: 1px solid var(--disabled-text-color);
         border-bottom: none;
         opacity: .5;
       }
-      .dropdown-content > paper-input {
+
+      .dropdown-content>paper-input {
         padding-left: 1em;
         --paper-input-container-input-color: black;
         --paper-input-container-underline: {
           display: none;
-        };
+        }
+        ;
         --paper-input-container-underline-focus: {
           display: none;
-        };
+        }
+        ;
         --paper-input-container: {
           padding: 0;
-        };
+        }
+        ;
       }
+
       paper-menu-button {
         --paper-input-container-input-color: var(--primary-text-color);
       }
-      .dropdown-content > p {
+
+      .dropdown-content>p {
         padding-left: 1em;
       }
+
       [search-bar] {
         display: flex;
         flex-direction: row;
         align-items: center;
       }
+
       [search-bar] iron-input {
         flex: 1;
         display: flex;
         flex-direction: row;
       }
+
       [search-bar] input {
         border: none;
         flex: 1;
@@ -130,11 +140,14 @@ respectively.
         min-width: 0;
         margin-bottom: 3px;
       }
+
       [search-bar] iron-icon {
         margin-left: 1em;
       }
+
       [warning] {
-        background: #FFE0B2; /* paper-orange-100 */
+        background: #FFE0B2;
+        /* paper-orange-100 */
         margin: 0;
         padding: .5em 1em;
       }
@@ -142,46 +155,23 @@ respectively.
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
     <span role="button"></span>
-    <paper-menu-button
-      id="menuButton"
-      vertical-align="[[verticalAlign]]"
-      horizontal-align="[[horizontalAlign]]"
-      dynamic-align="[[dynamicAlign]]"
-      vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]"
-      disabled="[[_disabledOrReadonly(disabled, readonly)]]"
-      no-animations="[[noAnimations]]"
-      on-iron-select="_onIronSelect"
-      on-iron-deselect="_onIronDeselect"
-      opened="{{opened}}"
-      close-on-activate
-      no-overlap
-      allow-outside-scroll="[[allowOutsideScroll]]"
-      restore-focus-on-close="[[restoreFocusOnClose]]">
+    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" dynamic-align="[[dynamicAlign]]"
+      vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[_disabledOrReadonly(disabled, readonly)]]"
+      no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}"
+      close-on-activate no-overlap allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]">
       <!-- support hybrid mode: user might be using paper-menu-button 1.x which distributes via <content> -->
       <div class="dropdown-trigger" slot="dropdown-trigger">
         <paper-ripple></paper-ripple>
         <!-- paper-input has type="text" for a11y, do not remove -->
-        <paper-input
-          type="text"
-          invalid="[[invalid]]"
-          readonly
-          disabled="[[disabled]]"
-          name="[[name]]"
-          value="[[selectedItemLabel]]"
-          placeholder="[[placeholder]]"
-          error-message="[[errorMessage]]"
-          always-float-label="[[alwaysFloatLabel]]"
-          no-label-float="[[noLabelFloat]]"
+        <paper-input type="text" invalid="[[invalid]]" readonly disabled="[[disabled]]" name="[[name]]" value="[[selectedItemLabel]]"
+          placeholder="[[placeholder]]" error-message="[[errorMessage]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]"
           label="[[label]]">
           <!-- support hybrid mode: user might be using paper-input 1.x which distributes via <content> -->
           <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix slot="suffix"></iron-icon>
         </paper-input>
       </div>
-      <paper-listbox class="dropdown-content" slot="dropdown-content"
-                     id="menu"
-                     selectable="[[selectable]]"
-                     on-tap="_checkSelectChange"
-                     stop-keyboard-event-propagation>
+      <paper-listbox class="dropdown-content" slot="dropdown-content" id="menu" selectable="[[selectable]]" on-tap="_checkSelectChange"
+        stop-keyboard-event-propagation>
 
         <div search-bar on-tap="_stopEvent" disabled>
           <iron-icon icon="search"></iron-icon>
@@ -192,14 +182,16 @@ respectively.
         </div>
 
         <template is="dom-if" if="[[tooBig]]">
-          <p warning disabled><iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
+          <p warning disabled>
+            <iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
         </template>
         <template is="dom-if" if="[[!_filtereditems.length]]">
           <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]">
             <p warning disabled>No results were found</p>
           </template>
           <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]">
-            <p warning disabled>No results were found<br />would you like to use the search value?</p>
+            <p warning disabled>No results were found
+              <br />would you like to use the search value?</p>
             <paper-item>[[searchValue]]</paper-item>
           </template>
         </template>
@@ -214,12 +206,12 @@ respectively.
       <template is="dom-repeat" items="[[items]]" as="item">
         <paper-item>[[item]]</paper-item>
       </template>
-		</template>
+    </template>
 
   </template>
 
   <script>
-    (function() {
+    (function () {
       'use strict';
 
       Polymer({
@@ -287,7 +279,7 @@ respectively.
            * The error message to display when invalid.
            */
           errorMessage: {
-              type: String
+            type: String
           },
 
           /**
@@ -316,9 +308,9 @@ respectively.
            * `<paper-input-container>`'s `noLabelFloat` property.
            */
           noLabelFloat: {
-              type: Boolean,
-              value: false,
-              reflectToAttribute: true
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           },
 
           /**
@@ -409,7 +401,7 @@ respectively.
            */
           items: {
             type: Array,
-            value: function() {return []}
+            value: function () { return [] }
           },
 
           /**
@@ -437,8 +429,8 @@ respectively.
            */
           filter: {
             type: Function,
-            value: function() {
-              return function(items, searchValue, filterProperty) {
+            value: function () {
+              return function (items, searchValue, filterProperty) {
                 // older version of filter did not have filterProperty as an argument
                 // fallback for backwards compatibility
                 if (!filterProperty) {
@@ -448,7 +440,7 @@ respectively.
                   return items;
                 } else {
                   var _searchValue = searchValue.toLowerCase();
-                  return items.filter( function(item) {
+                  return items.filter(function (item) {
                     if (!item[filterProperty] && typeof item != "string") {
                       console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `" + filterProperty + "` property");
                       return true; // everything goes through
@@ -522,7 +514,7 @@ respectively.
           '_updateSelectedItemLabel(items, value, filterProperty)'
         ],
 
-        attached: function() {
+        attached: function () {
           // NOTE(cdata): Due to timing, a preselected value in a `IronSelectable`
           // child will cause an `iron-select` event to fire while the element is
           // still in a `DocumentFragment`. This has the effect of causing
@@ -531,7 +523,7 @@ respectively.
           if (contentElement && contentElement.selectedItem) {
             this._setSelectedItem(contentElement.selectedItem);
           }
-          if (!this._isSetupTemplate){
+          if (!this._isSetupTemplate) {
             this._isSetupTemplate = true;
             this._setupTemplate();
           }
@@ -547,14 +539,14 @@ respectively.
         /**
          * Show the dropdown content.
          */
-        open: function() {
+        open: function () {
           this.$.menuButton.open();
         },
 
         /**
          * Hide the dropdown content.
          */
-        close: function() {
+        close: function () {
           this.$.menuButton.close();
         },
 
@@ -563,7 +555,7 @@ respectively.
          *
          * @param {CustomEvent} event An `iron-select` event.
          */
-        _onIronSelect: function(event) {
+        _onIronSelect: function (event) {
           this._setSelectedItem(event.detail.item);
         },
 
@@ -572,7 +564,7 @@ respectively.
          *
          * @param {CustomEvent} event An `iron-deselect` event.
          */
-        _onIronDeselect: function(event) {
+        _onIronDeselect: function (event) {
           this._setSelectedItem(null);
         },
 
@@ -581,7 +573,7 @@ respectively.
          *
          * @param {CustomEvent} event A tap event.
          */
-        _onTap: function(event) {
+        _onTap: function (event) {
           if (Polymer.Gestures.findOriginalTarget(event) === this) {
             this.open();
           }
@@ -593,7 +585,7 @@ respectively.
          * @param {Element} selectedItem A selected Element item, with an
          * optional `label` property.
          */
-        _selectedItemChanged: function(selectedItem) {
+        _selectedItemChanged: function (selectedItem) {
           if (this.opened) { // user is searching
             return;
           }
@@ -620,7 +612,7 @@ respectively.
          * @param {boolean} noLabelFloat True if the label should not float
          * above the input, otherwise false.
          */
-        _computeMenuVerticalOffset: function(noLabelFloat) {
+        _computeMenuVerticalOffset: function (noLabelFloat) {
           // NOTE(cdata): These numbers are somewhat magical because they are
           // derived from the metrics of elements internal to `paper-input`'s
           // template. The metrics will change depending on whether or not the
@@ -635,11 +627,11 @@ respectively.
          * @return {boolean} true if `required` is false, or if `required` is true
          * and the element has a valid selection.
          */
-        _getValidity: function(_value) {
+        _getValidity: function (_value) {
           return this.disabled || !this.required || (this.required && !!this.value);
         },
 
-        _openedChanged: function() {
+        _openedChanged: function () {
           var openState = this.opened ? 'true' : 'false';
           var e = this.contentElement;
           if (e) {
@@ -653,7 +645,7 @@ respectively.
 
 
 
-        _focusSearch: function() {
+        _focusSearch: function () {
           this.$.searchInput.focus();
           this.$.searchInput.select();
         },
@@ -661,10 +653,10 @@ respectively.
         /**
          * Sets up the template
          */
-        _setupTemplate: function() {
+        _setupTemplate: function () {
           // when the user clears the search field, the selectedItem is null
           // this causes an iron-select event causing the dropdown to close
-          this.$.menuButton._onIronSelect = function(event) {
+          this.$.menuButton._onIronSelect = function (event) {
             var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || this.selectedItem.textContent.trim());
             if (!value && this.selectedItemLabel) {
               return;
@@ -676,7 +668,7 @@ respectively.
 
           // normally a user can select an option by typign the first letter
           // this clashes with the search field
-          this.$.menu._focusWithKeyboardEvent = function() {};
+          this.$.menu._focusWithKeyboardEvent = function () { };
 
           var template = Polymer.dom(this).querySelector('template') || this.$.menuTemplate;
           this.templatize(template);
@@ -693,13 +685,13 @@ respectively.
          *
          * @param {Array.<Object>} filtereditems the new list to display in the dropdown
          */
-        _updateTemplate: function(filtereditems) {
+        _updateTemplate: function (filtereditems) {
           if (this._templateInstance) {
             this._templateInstance.items = filtereditems;
           }
         },
 
-        _refit: function() {
+        _refit: function () {
           if (this.opened) {
             this.$.menuButton.$.dropdown.refit();
           }
@@ -712,11 +704,11 @@ respectively.
          * @param {String} searchValue value to filter with
          * @return {Array.<Object>} the filtered array
          */
-        _filterItems: function(items, searchValue, filterProperty) {
+        _filterItems: function (items, searchValue, filterProperty) {
           var result = this.filter ? this.filter(items, searchValue, filterProperty) : items;
           if (this.maxSize > 0) {
             this._setTooBig(result.length > this.maxSize);
-            return result.slice(0,this.maxSize);
+            return result.slice(0, this.maxSize);
           }
           else {
             this._setTooBig(false);
@@ -724,34 +716,35 @@ respectively.
           }
         },
 
-        _stopEvent: function(event) {
+        _stopEvent: function (event) {
           event.stopPropagation();
         },
 
         /**
          * Clears 'searchValue' and focuses the search input
          */
-        clearSearch: function(event) {
-          event && this._stopEvent(event);
-          this.searchValue = "";
-          this._focusSearch();
+        clearSearch: function (event) {
+          // event && this._stopEvent(event);
+          // this.searchValue = "";
+          // this._focusSearch();
+          this._setSelectedItemLabel(null);
         },
 
-        _updateSelectedItem: function(itemsLength, selectedItemLabel, filterProperty) {
+        _updateSelectedItem: function (itemsLength, selectedItemLabel, filterProperty) {
           var displayValue = this.selectedItem && (this.selectedItem.textContent.trim() || this.selectedItem.label);
           var value = this.selectedItem && (this.selectedItem.label || this.selectedItem.getAttribute('label') || displayValue);
           if (selectedItemLabel && value != selectedItemLabel) {
-            var index = this.$.menu.items.findIndex( function(item) {
+            var index = this.$.menu.items.findIndex(function (item) {
               return item.label == selectedItemLabel ||
-                     item[filterProperty] == selectedItemLabel ||
-                     item.value == selectedItemLabel ||
-                     item == selectedItemLabel;
-            } );
+                item[filterProperty] == selectedItemLabel ||
+                item.value == selectedItemLabel ||
+                item == selectedItemLabel;
+            });
             index > -1 && this.$.menu.select(index);
           }
         },
 
-        _updateSelectedItemLabel: function(items, value, filterProperty) {
+        _updateSelectedItemLabel: function (items, value, filterProperty) {
           if (value === undefined) {
             return;
           }
@@ -761,7 +754,7 @@ respectively.
             this.$.menu.selected = null;
             return;
           }
-          var selectedItem = items.find( function(item) {
+          var selectedItem = items.find(function (item) {
             return item[filterProperty] == value || item.label == value || item == value
           });
           if (selectedItem) {
@@ -785,7 +778,7 @@ respectively.
          * You click the first item in the filtered list, the change will not
          * get picked up. This fixed this edge case.
          */
-        _checkSelectChange: function(event) {
+        _checkSelectChange: function (event) {
           // execute ~after~ the normal update flow
           // otherwise we would always detect the edge case
           setTimeout(function () {
@@ -795,10 +788,10 @@ respectively.
             // when running in a full Polymer 2.x context
             var selectedItem;
             if (event.composedPath && event.composedPath()[0]) {
-               selectedItem = event.composedPath()[0];
+              selectedItem = event.composedPath()[0];
             }
             else {
-               selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
+              selectedItem = Polymer.dom(event.detail.sourceEvent).localTarget;
             }
 
             var selectedItemLabel = selectedItem.textContent.trim() || selectedItem.label;
@@ -810,11 +803,11 @@ respectively.
           }.bind(this), 0);
         },
 
-        _disabledOrReadonly: function(disabled, readonly) {
+        _disabledOrReadonly: function (disabled, readonly) {
           return disabled || readonly;
         },
 
-        _showFreeInput: function(freedom, searchValue) {
+        _showFreeInput: function (freedom, searchValue) {
           return freedom && searchValue != "";
         }
       });
