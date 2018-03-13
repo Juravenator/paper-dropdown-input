@@ -8,30 +8,52 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../polymer/lib/elements/dom-if.html">
-<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
-<link rel="import" href="../iron-behaviors/iron-button-state.html">
-<link rel="import" href="../iron-behaviors/iron-control-state.html">
-<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../paper-ripple/paper-ripple.html">
-<link rel="import" href="../paper-styles/default-theme.html">
-<link rel="import" href="../neon-animation/web-animations.html">
+<link rel="import"
+      href="../polymer/polymer.html">
+<link rel="import"
+      href="../polymer/lib/elements/dom-if.html">
+<link rel="import"
+      href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import"
+      href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import"
+      href="../iron-behaviors/iron-button-state.html">
+<link rel="import"
+      href="../iron-behaviors/iron-control-state.html">
+<link rel="import"
+      href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import"
+      href="../iron-icon/iron-icon.html">
+<link rel="import"
+      href="../iron-icons/iron-icons.html">
+<link rel="import"
+      href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import"
+      href="../paper-input/paper-input.html">
+<link rel="import"
+      href="../paper-menu-button/paper-menu-button.html">
+<link rel="import"
+      href="../paper-ripple/paper-ripple.html">
+<link rel="import"
+      href="../paper-styles/default-theme.html">
+<link rel="import"
+      href="../neon-animation/web-animations.html">
 
-<link rel="import" href="../iron-input/iron-input.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-item/paper-item.html">
-<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import"
+      href="../iron-input/iron-input.html">
+<link rel="import"
+      href="../paper-icon-button/paper-icon-button.html">
+<link rel="import"
+      href="../paper-input/paper-input.html">
+<link rel="import"
+      href="../paper-item/paper-item.html">
+<link rel="import"
+      href="../paper-listbox/paper-listbox.html">
 
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-icons.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-shared-styles.html">
+<link rel="import"
+      href="../paper-dropdown-menu/paper-dropdown-menu-icons.html">
+<link rel="import"
+      href="../paper-dropdown-menu/paper-dropdown-menu-shared-styles.html">
 
 <!--
 `paper-dropdown-input` implements a searchable dropdown menu.
@@ -155,42 +177,82 @@ respectively.
 
     <!-- this div fulfills an a11y requirement for combobox, do not remove -->
     <span role="button"></span>
-    <paper-menu-button id="menuButton" vertical-align="[[verticalAlign]]" horizontal-align="[[horizontalAlign]]" dynamic-align="[[dynamicAlign]]"
-      vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]" disabled="[[_disabledOrReadonly(disabled, readonly)]]"
-      no-animations="[[noAnimations]]" on-iron-select="_onIronSelect" on-iron-deselect="_onIronDeselect" opened="{{opened}}"
-      close-on-activate no-overlap allow-outside-scroll="[[allowOutsideScroll]]" restore-focus-on-close="[[restoreFocusOnClose]]">
+    <paper-menu-button id="menuButton"
+                       vertical-align="[[verticalAlign]]"
+                       horizontal-align="[[horizontalAlign]]"
+                       dynamic-align="[[dynamicAlign]]"
+                       vertical-offset="[[_computeMenuVerticalOffset(noLabelFloat)]]"
+                       disabled="[[_disabledOrReadonly(disabled, readonly)]]"
+                       no-animations="[[noAnimations]]"
+                       on-iron-select="_onIronSelect"
+                       on-iron-deselect="_onIronDeselect"
+                       opened="{{opened}}"
+                       close-on-activate
+                       no-overlap
+                       allow-outside-scroll="[[allowOutsideScroll]]"
+                       restore-focus-on-close="[[restoreFocusOnClose]]">
       <!-- support hybrid mode: user might be using paper-menu-button 1.x which distributes via <content> -->
-      <div class="dropdown-trigger" slot="dropdown-trigger">
+      <div class="dropdown-trigger"
+           slot="dropdown-trigger">
         <paper-ripple></paper-ripple>
         <!-- paper-input has type="text" for a11y, do not remove -->
-        <paper-input type="text" invalid="[[invalid]]" readonly disabled="[[disabled]]" name="[[name]]" value="[[selectedItemLabel]]"
-          placeholder="[[placeholder]]" error-message="[[errorMessage]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]"
-          label="[[label]]">
+        <paper-input type="text"
+                     invalid="[[invalid]]"
+                     readonly
+                     disabled="[[disabled]]"
+                     name="[[name]]"
+                     value="[[selectedItemLabel]]"
+                     placeholder="[[placeholder]]"
+                     error-message="[[errorMessage]]"
+                     always-float-label="[[alwaysFloatLabel]]"
+                     no-label-float="[[noLabelFloat]]"
+                     label="[[label]]">
           <!-- support hybrid mode: user might be using paper-input 1.x which distributes via <content> -->
-          <iron-icon icon="paper-dropdown-menu:arrow-drop-down" suffix slot="suffix"></iron-icon>
+          <iron-icon icon="paper-dropdown-menu:arrow-drop-down"
+                     suffix
+                     slot="suffix"></iron-icon>
         </paper-input>
       </div>
-      <paper-listbox class="dropdown-content" slot="dropdown-content" id="menu" selectable="[[selectable]]" on-tap="_checkSelectChange"
-        stop-keyboard-event-propagation>
+      <paper-listbox class="dropdown-content"
+                     slot="dropdown-content"
+                     id="menu"
+                     selectable="[[selectable]]"
+                     on-tap="_checkSelectChange"
+                     stop-keyboard-event-propagation>
 
-        <div search-bar on-tap="_stopEvent" disabled>
+        <div search-bar
+             on-tap="_stopEvent"
+             disabled>
           <iron-icon icon="search"></iron-icon>
           <iron-input bind-value="{{searchValue}}">
-            <input id="searchInput" value="{{value::input}}" is="iron-input" bind-value="{{searchValue}}">
+            <input id="searchInput"
+                   value="{{value::input}}"
+                   is="iron-input"
+                   bind-value="{{searchValue}}">
           </iron-input>
-          <paper-icon-button on-click="clearSearch" icon="clear" alt="clear" title="clear"></paper-icon-button>
+          <paper-icon-button on-click="clearSearch"
+                             icon="clear"
+                             alt="clear"
+                             title="clear"></paper-icon-button>
         </div>
 
-        <template is="dom-if" if="[[tooBig]]">
-          <p warning disabled>
+        <template is="dom-if"
+                  if="[[tooBig]]">
+          <p warning
+             disabled>
             <iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
         </template>
-        <template is="dom-if" if="[[!_filtereditems.length]]">
-          <template is="dom-if" if="[[!_showFreeInput(freedom, searchValue)]]">
-            <p warning disabled>No results were found</p>
+        <template is="dom-if"
+                  if="[[!_filtereditems.length]]">
+          <template is="dom-if"
+                    if="[[!_showFreeInput(freedom, searchValue)]]">
+            <p warning
+               disabled>No results were found</p>
           </template>
-          <template is="dom-if" if="[[_showFreeInput(freedom, searchValue)]]">
-            <p warning disabled>No results were found
+          <template is="dom-if"
+                    if="[[_showFreeInput(freedom, searchValue)]]">
+            <p warning
+               disabled>No results were found
               <br />would you like to use the search value?</p>
             <paper-item>[[searchValue]]</paper-item>
           </template>
@@ -203,7 +265,9 @@ respectively.
 
 
     <template id="menuTemplate">
-      <template is="dom-repeat" items="[[items]]" as="item">
+      <template is="dom-repeat"
+                items="[[items]]"
+                as="item">
         <paper-item>[[item]]</paper-item>
       </template>
     </template>
@@ -727,7 +791,10 @@ respectively.
           // event && this._stopEvent(event);
           // this.searchValue = "";
           // this._focusSearch();
-          this._setSelectedItemLabel(null);
+          this.dispatchEvent(new CustomEvent('stet-clear', {
+            bubbles: true,
+            composed: true
+          }));
         },
 
         _updateSelectedItem: function (itemsLength, selectedItemLabel, filterProperty) {
