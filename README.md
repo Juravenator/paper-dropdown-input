@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/Juravenatorpaper-dropdown-input)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/Juravenatorpaper-dropdown-input.svg)](https://vaadin.com/directory/component/Juravenatorpaper-dropdown-input)
+
 # paper-dropdown-input
 A paper-input that provides the user with input suggestions.  
 Compatible with Polymer 1.9 and 2.x.
