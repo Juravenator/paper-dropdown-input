@@ -213,22 +213,21 @@ respectively.
           </iron-input>
           <paper-icon-button on-click="clearSearch"
                              icon="clear"
-                             alt="clear"
-                             title="clear"></paper-icon-button>
+                             alt="clear"></paper-icon-button>
         </div>
 
         <template is="dom-if"
                   if="[[tooBig]]">
           <p warning
              disabled>
-            <iron-icon icon="warning"></iron-icon>Only showing the first [[maxSize]] items</p>
+            <iron-icon icon="warning"></iron-icon>[[_displayMaxSize(labels)]]</p>
         </template>
         <template is="dom-if"
                   if="[[!_filtereditems.length]]">
           <template is="dom-if"
                     if="[[!_showFreeInput(freedom, searchValue)]]">
             <p warning
-               disabled>No results were found</p>
+               disabled>[[_displayNoResults(labels)]]</p>
           </template>
           <template is="dom-if"
                     if="[[_showFreeInput(freedom, searchValue)]]">
@@ -449,6 +448,14 @@ respectively.
             value: function () { return [] }
           },
 
+          labels: {
+            type: Object,
+            value: () => ({
+              tooMany: 'Only showing the first MAX_SIZE items',
+              noResult: 'No results were found'
+            }),
+          },
+
           /**
            * The current search query entered by the user
            */
@@ -579,6 +586,20 @@ respectively.
          */
         get contentElement() {
           return this.$.menu;
+        },
+
+        _displayMaxSize: (labels) => {
+          if (!labels) {
+            return;
+          }
+          return labels.maxSize.replace('MAX_SIZE', this.maxSize);
+        },
+
+        _displayNoResults: (labels) => {
+          if (!labels) {
+            return;
+          }
+          return labels.noResult;
         },
 
         /**
