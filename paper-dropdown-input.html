@@ -220,7 +220,7 @@ respectively.
                   if="[[tooBig]]">
           <p warning
              disabled>
-            <iron-icon icon="warning"></iron-icon>[[_displayMaxSize(labels)]]</p>
+            <iron-icon icon="warning"></iron-icon>[[_displayMaxSize(labels, maxSize)]]</p>
         </template>
         <template is="dom-if"
                   if="[[!_filtereditems.length]]">
@@ -588,11 +588,11 @@ respectively.
           return this.$.menu;
         },
 
-        _displayMaxSize: (labels) => {
+        _displayMaxSize: (labels, maxSize) => {
           if (!labels) {
             return;
           }
-          return labels.tooMany.replace('MAX_SIZE', this.maxSize);
+          return labels.tooMany.replace('MAX_SIZE', maxSize);
         },
 
         _displayNoResults: (labels) => {
