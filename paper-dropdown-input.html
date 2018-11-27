@@ -493,6 +493,8 @@ respectively.
                 } else {
                   var _searchValue = searchValue.toLowerCase();
                   return items.filter(function (item) {
+                    // parse to String to handle number type
+                    item = item.toString();
                     if (!item[filterProperty] && typeof item != "string") {
                       console.error("paper-dropdown-input: item in `items`:", item, " is not a string or does not contain `" + filterProperty + "` property");
                       return true; // everything goes through
@@ -790,9 +792,9 @@ respectively.
          * Clears 'searchValue' and focuses the search input
          */
         clearSearch: function (event) {
-          // event && this._stopEvent(event);
-          // this.searchValue = "";
-          // this._focusSearch();
+          event && this._stopEvent(event);
+          this.searchValue = "";
+          this._focusSearch();
           this.dispatchEvent(new CustomEvent('stet-clear', {
             bubbles: true,
             composed: true
