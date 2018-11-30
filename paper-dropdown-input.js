@@ -570,6 +570,7 @@ class PaperDropdownInput extends mixinBehaviors(
 
   _itemsChanged(item) {
     // console.log("item", item);
+
   }
 
   listeners() {
