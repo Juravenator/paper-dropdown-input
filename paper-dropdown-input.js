@@ -458,7 +458,7 @@ class PaperDropdownInput extends mixinBehaviors(
         value: function() {
           return [];
         },
-        observer: "_itemsChanged"
+        // observer: "_itemsChanged"
       },
 
       labels: {
@@ -569,7 +569,7 @@ class PaperDropdownInput extends mixinBehaviors(
   }
 
   _itemsChanged(item) {
-    console.log("item", item);
+    // console.log("item", item);
   }
 
   listeners() {
@@ -790,8 +790,6 @@ class PaperDropdownInput extends mixinBehaviors(
     // this._templateInstance = new toto();
     let dom = dom$0(this);
     dom.appendChild(this._templateInstance.root);
-    console.log("dom", dom);
-    console.log("templateIsbntnace", this._templateInstance.root);
     // dom.insertBefore(this._templateInstance.root, dom.firstChild);
   }
 

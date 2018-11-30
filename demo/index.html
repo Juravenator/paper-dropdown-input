@@ -13,12 +13,16 @@
     window.Polymer = window.Polymer || {};
     window.Polymer.dom = 'shadow';
   </script>
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
   
-  <link rel="import" href="../../polymer/polymer.html">
+  <!-- Polyfill for fade out animations for Polymer 3, do not remove! -->
+  <script src="../node_modules/web-animations-js/web-animations-next-lite.min.js"></script> 
+  
+  <script type="module" src="../node_modules/@polymer/polymer/polymer-legacy.js"></script>
   <!-- <link rel="import" href="../../polymer/lib/elements/dom-bind.html"> -->
-  <link rel="import" href="../paper-dropdown-input.html">
-  <link rel="import" href="dinosaur-card.html">
+  <script type="module" src="../node_modules/@polymer/polymer/lib/elements/dom-bind.js"></script>
+  <script type="module" src="../paper-dropdown-input.js"></script>
+  <script type="module" src="./dinosaur-card.js"></script>
   <style>
     h3, p {
       font-family: Roboto;
@@ -55,7 +59,7 @@
         It's possible to customise the dropdown menu to your taste. Provide a template tag containing your custom layout,
         it will receive a variable 'items', containing all items after filtering.
       </p>
-      <paper-dropdown-input label="Your favorite dinosaur" items='[[complexItems]]' filter-property=dinoName>
+      <paper-dropdown-input label="Your favorite dinosaur..." items='[[complexItems]]' filter-property=dinoName>
         <template>
           <p disabled>Carnivores</p>
           <template is="dom-repeat" items="[[_getCarnivores(items)]]" as="item">
@@ -80,8 +84,10 @@
 
     </template>
   </dom-bind>
-
-  <script>
+ <script type="module">
+    import '@polymer/polymer/polymer-legacy.js';
+    import '../paper-dropdown-input.js';
+    import './dinosaur-card.js';
     if (Polymer.version) {
       setupDemo();
     }
@@ -89,7 +95,7 @@
       window.addEventListener('WebComponentsReady', setupDemo);
     }
     function setupDemo() {
-      var template = Polymer.version[0] === "1" ? document.querySelector("template[is='dom-bind']") : document.querySelector("dom-bind");
+      var template = document.querySelector("dom-bind");
       template._getCarnivores = items => items.filter( item => item.type == "carnivore" );
       template._getHerbivores = items => items.filter( item => item.type == "herbivore" );
       // auto-binding template is ready.
@@ -154,7 +160,7 @@
         }
       }
     }
-  </script>
+</script>
 </body>
 
 </html>
